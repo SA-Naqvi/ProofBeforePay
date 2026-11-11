@@ -6,7 +6,7 @@ import { gsap, prefersReducedMotion, useGSAP } from "@/lib/gsap";
 import { markIntroDone } from "@/lib/intro";
 import { LogoMark } from "@/components/layout/Logo";
 
-const PHASES = ["Reading the offer", "Searching the web", "Checking domains", "Testing every claim", "Weighing the evidence"];
+const PHASES = ["Reading the paperwork", "Checking registries", "Following the evidence", "Testing every claim", "Weighing the evidence"];
 const SEEN_KEY = "pbp:intro-seen";
 
 /**

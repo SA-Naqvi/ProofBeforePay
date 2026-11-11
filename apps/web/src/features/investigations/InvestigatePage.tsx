@@ -10,9 +10,9 @@ import { useHealth } from "@/hooks/useBackend";
 import { STAGES } from "@/lib/stages";
 
 const TIPS = [
-  "Paste the whole message, links and signature included. Links get opened safely for you.",
-  "Add the sender's email address if you have it. The domain alone tells us a lot.",
-  "Leave out your own passwords, ID numbers and bank details. They're never needed.",
+  "Paste the whole invoice or chat: company name, address, licence and certificate numbers, bank details and payment terms.",
+  "Add the supplier's email or website if you have it. Its domain age tells us a lot. A factory photo link lets us trace the photo.",
+  "Leave out your own passwords and bank details. They're never needed.",
 ];
 
 export function InvestigatePage() {
@@ -21,9 +21,9 @@ export function InvestigatePage() {
 
   return (
     <div>
-      <PageHeader eyebrow="New check" title="What did they send you?">
-        Paste it below. Seven agents will check the sender, the company and every claim, then tell you whether it&apos;s safe to take the
-        next step. It takes about 40 seconds and stays in your history.
+      <PageHeader eyebrow="New check" title="What did the supplier send you?">
+        Paste it below. The agent checks the company, its registration, customs records, certificates, address and photos, follows every
+        inconsistency, and tells you whether it&apos;s safe to pay the deposit. It stays in your history.
       </PageHeader>
 
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,0.65fr)]">

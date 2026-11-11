@@ -1,4 +1,4 @@
-"""Pattern rules over message and page text. Each fires on a phrase and keeps the sentence it came from."""
+"""Pattern rules over invoices, listings and chat text. Each fires on a phrase and keeps the sentence it came from."""
 from __future__ import annotations
 
 import re
@@ -17,65 +17,61 @@ def _rx(pattern: str) -> re.Pattern[str]:
 
 RULES = (
     Rule(
-        "upfront_payment",
-        "Asks you to pay before you start",
+        "personal_account",
+        "Asks you to pay a personal or third-party account",
         "high",
-        _rx(r"\b(?:registration|training|processing|application|onboarding|certification|placement|starter|activation|security|visa)\s+(?:fee|deposit|charge|kit)s?\b"
-            r"|\bpay\s+(?:a|the|an|your)\s+(?:small\s+|one[- ]time\s+)?(?:fee|deposit)\b|\brefundable\s+deposit\b"),
-        "Legitimate employers do not charge candidates to get hired.",
-    ),
-    Rule(
-        "check_equipment",
-        "Fake-check / equipment purchase pattern",
-        "high",
-        _rx(r"\b(?:send|mail|deposit|cash)\w*\s+(?:you\s+)?(?:a\s+)?(?:check|cheque)\b|\b(?:check|cheque)\s+(?:to|for|so\s+you\s+can)\s+(?:buy|purchase)\b"
-            r"|\b(?:approved|designated|preferred|certified|our)\s+vendor\b|\b(?:purchase|buy)\s+(?:your\s+|the\s+|all\s+)?(?:work\s+)?(?:equipment|laptop|software|devices?)\b"),
-        "Being sent a check to buy equipment from a vendor they choose is the classic fake-check scheme.",
+        _rx(r"\b(?:personal|private|individual|director'?s|boss'?s|manager'?s|wife'?s|friend'?s|another|different|third[- ]party)\s+(?:bank\s+)?(?:account|card)\b"
+            r"|\b(?:pay|transfer|wire|remit|send)\b[^.\n]{0,60}\b(?:to\s+(?:my|our|his|her)\s+(?:personal|private)|to\s+an?\s+(?:individual|personal))\b"
+            r"|\baccount\s+(?:name|holder)\b[^.\n]{0,40}\b(?:is|:)\s*(?:mr|mrs|ms|miss)\.?\s+\w+"),
+        "A real manufacturer invoices from a company account whose name matches the company on the invoice.",
     ),
     Rule(
         "irreversible_payment",
         "Mentions hard-to-reverse payment methods",
         "high",
-        _rx(r"\b(?:bitcoin|btc|usdt|crypto(?:currency)?|gift\s*cards?|itunes\s+cards?|western\s+union|moneygram|zelle|cash\s*app)\b"),
-        "Crypto, gift cards and wire services can't be reversed, which is why fraud prefers them.",
+        _rx(r"\b(?:bitcoin|btc|usdt|crypto(?:currency)?|gift\s*cards?|western\s+union|moneygram|zelle|cash\s*app|paypal\s+friends)\b"),
+        "Crypto, gift cards and wire services can't be recalled, which is why fraud prefers them.",
     ),
     Rule(
-        "sensitive_data",
-        "Asks for sensitive personal or financial data",
+        "full_prepayment",
+        "Asks for most or all of the payment upfront",
         "high",
-        _rx(r"\b(?:ssn|social\s+security|bank\s+(?:account|login|details|information)|routing\s+number|passport\s+(?:copy|number|scan)|cnic|credit\s+card|debit\s+card|national\s+id)\b"),
-        "Bank details and ID numbers should only go to a verified employer after a written offer.",
+        _rx(r"\b(?:100|9\d|8\d|7\d)\s?%\s+(?:payment\s+)?(?:in\s+advance|upfront|up\s+front|prepay\w*|before\s+(?:production|shipment|shipping))\b"
+            r"|\b(?:full|entire)\s+(?:payment|amount)\s+(?:in\s+advance|upfront|before\s+(?:production|shipping|shipment))\b"
+            r"|\bpay(?:ment)?\s+(?:in\s+full\s+)?(?:before|prior\s+to)\s+(?:production|shipment|shipping|inspection)\b"),
+        "Standard terms for a new supplier are a deposit of around 30% with the balance against inspection or shipping documents.",
     ),
     Rule(
-        "chat_interview",
-        "Interview or hiring over a chat app",
+        "off_platform",
+        "Pushes the deal off the platform's buyer protection",
         "medium",
-        _rx(r"\b(?:interview|chat|onboard\w*|hiring|recruit\w*|contact|message|text)\b[^.\n]{0,60}\b(?:telegram|whatsapp|signal\s+app|wickr|wechat|google\s+chat|hangouts)\b"
-            r"|\b(?:telegram|whatsapp|wickr|wechat)\b[^.\n]{0,60}\b(?:interview|chat|onboard\w*|hiring)\b"),
-        "Real companies rarely run interviews purely by text on messaging apps.",
+        _rx(r"\b(?:avoid|bypass|skip|without)\b[^.\n]{0,40}\b(?:trade\s+assurance|escrow|platform\s+fee|alibaba\s+fee|commission)\b"
+            r"|\b(?:pay|payment)\b[^.\n]{0,40}\b(?:outside|off)\s+(?:the\s+)?(?:platform|alibaba|indiamart|site)\b"
+            r"|\b(?:move|continue|talk|chat)\b[^.\n]{0,40}\b(?:to\s+)?(?:whatsapp|telegram|wechat|skype)\b[^.\n]{0,40}\b(?:pay|payment|invoice|deal)\b"),
+        "Buyer protection only covers payments made through the platform.",
     ),
     Rule(
-        "too_easy",
-        "Hiring with no screening",
+        "inspection_refusal",
+        "Resists inspection, video calls or sample checks",
         "medium",
-        _rx(r"\bno\s+(?:prior\s+)?(?:experience|interview|skills?|resume|cv)\s+(?:is\s+)?(?:needed|required|necessary)\b|\b(?:hired|start)\s+(?:immediately|today|right\s+away)\b|\bwithout\s+(?:an\s+)?interview\b"),
-        "Being hired without any screening is a common bait.",
+        _rx(r"\b(?:no|not\s+allow\w*|cannot|can'?t|unable\s+to|refuse\w*)\b[^.\n]{0,30}\b(?:factory\s+(?:visit|tour|inspection|audit)|third[- ]party\s+inspection|video\s+(?:call|tour)|site\s+visit)\b"),
+        "Genuine factories routinely allow inspections and video tours.",
     ),
     Rule(
         "prompt_injection",
-        "Message contains instructions aimed at AI checkers",
+        "Text contains instructions aimed at AI checkers",
         "high",
         _rx(r"\b(?:ignore|disregard|forget)\s+(?:all\s+|any\s+)?(?:(?:previous|prior|above|earlier|your|the)\s+)+(?:instructions|rules|prompts?|guidelines)\b"
-            r"|\b(?:classify|mark|rate|label|treat|flag)\s+(?:this|the)\s+(?:message|email|offer|text)\s+as\s+(?:safe|legitimate|legit|genuine|verified|trusted)\b"
+            r"|\b(?:classify|mark|rate|label|treat|flag)\s+(?:this|the)\s+(?:message|email|invoice|listing|supplier|offer|text)\s+as\s+(?:safe|legitimate|legit|genuine|verified|trusted)\b"
             r"|\b(?:ai|automated|language\s+model|llm|assistant|scanner|checker)s?\b[^.\n]{0,40}\b(?:must|should)\s+(?:classify|mark|rate|label|respond|answer|reply|output|return)\b"
             r"|\bnote\s+to\s+(?:the\s+)?(?:ai|assistants?|llms?|language\s+models?)\b"),
-        "Genuine messages don't address automated checkers. Text like this tries to steer screening tools.",
+        "Genuine paperwork doesn't address automated checkers. Text like this tries to steer screening tools.",
     ),
     Rule(
         "pressure",
-        "Pressure to act fast",
+        "Pressure to pay fast",
         "low",
-        _rx(r"\b(?:urgent(?:ly)?|within\s+(?:\d{1,2}|twenty[- ]four|forty[- ]eight)\s+hours|asap|limited\s+(?:slots|spots|positions|seats)|act\s+now|today\s+only|before\s+(?:the\s+)?slots?\s+(?:fill|close))\b"),
+        _rx(r"\b(?:urgent(?:ly)?|within\s+(?:\d{1,2}|twenty[- ]four|forty[- ]eight)\s+hours|asap|price\s+(?:will\s+)?(?:goes?\s+up|expires?)|limited\s+(?:stock|slots|quantity)|act\s+now|today\s+only|last\s+(?:chance|batch))\b"),
         "Urgency is used to stop you from checking.",
     ),
 )

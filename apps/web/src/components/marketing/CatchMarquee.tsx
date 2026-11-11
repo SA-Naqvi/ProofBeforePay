@@ -3,25 +3,25 @@
 import { VelocityMarquee } from "@/components/motion/interactive";
 
 const PATTERNS = [
-  "Upfront training fees",
-  "Checks to buy equipment",
-  "Lookalike domains",
-  "Interviews over Telegram",
-  "Overpay-and-refund",
+  "Someone else's licence number",
+  "Stolen ISO certificates",
+  "Photos from another factory",
+  "A trader posing as a factory",
+  "Payment to a personal account",
+  "100% upfront",
+  "A flat posing as a plant",
   "Domains registered last week",
-  "Gift cards and crypto",
-  "Copy-pasted scam scripts",
-  "Pay that's too good",
+  "Crypto and wire services",
 ];
 
 const CHECKS = [
-  "Official careers pages",
-  "Registry records",
-  "Sender vs official domain",
-  "Public fraud warnings",
-  "Pay norms for the role",
-  "The recruiter's real employer",
-  "Exact-phrase matches",
+  "Corporate registries",
+  "Customs and trade logs",
+  "Certificate directories",
+  "Map survey of the address",
+  "Reverse-image search",
+  "Who really owns the website",
+  "Public complaints",
 ];
 
 function Item({ text, tone }: { text: string; tone: "risk" | "check" }) {
@@ -33,7 +33,7 @@ function Item({ text, tone }: { text: string; tone: "risk" | "check" }) {
   );
 }
 
-/** Two counter-running rows: what scams ask for, and what ProofBeforePay checks. They speed up with scrolling. */
+/** Two counter-running rows: what fraudulent suppliers do, and what ProofBeforePay checks. They speed up with scrolling. */
 export function CatchMarquee() {
   return (
     <section className="relative border-y border-white/[0.06] bg-ink-900/40 py-8" aria-label="What ProofBeforePay looks for">

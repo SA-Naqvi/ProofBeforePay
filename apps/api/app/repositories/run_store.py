@@ -71,8 +71,15 @@ class RunStore:
         """Runs held in memory (this server's recent live runs), newest first."""
         return sorted(self._runs.values(), key=lambda r: r.created_at, reverse=True)
 
+    def discard(self, run_id: str) -> None:
+        """Forget a run that never started (for example, the person couldn't pay for it)."""
+        self._runs.pop(run_id, None)
+
     def list_examples(self) -> list[dict[str, Any]]:
-        return sorted((r.summary() for r in self.examples.values()), key=lambda s: s["created_at"], reverse=True)
+        # Recordings made by the earlier job-offer pipeline (methodology 2 and older) stay readable by link, but aren't
+        # offered as examples of what this supplier-verification product does.
+        current = (r for r in self.examples.values() if (r.report or {}).get("version", 1) >= 3)
+        return sorted((r.summary() for r in current), key=lambda s: s["created_at"], reverse=True)
 
     def _evict(self) -> None:
         finished = [r for r in self._runs.values() if r.finished]

@@ -12,6 +12,7 @@ from ..core.security import RateLimiter, SpendGuard
 from ..models.user import User
 from ..repositories.investigation_repo import InvestigationRepo
 from ..repositories.run_store import RunStore
+from .billing_service import BillingError, BillingService
 
 logger = logging.getLogger("proofbeforepay.investigations")
 
@@ -31,8 +32,10 @@ class InvestigationService:
         repo: InvestigationRepo,
         budget: SpendGuard,
         limiter: RateLimiter,
+        billing: BillingService | None = None,
     ) -> None:
         self.settings, self.pipeline, self.store, self.repo = settings, pipeline, store, repo
+        self.billing = billing
         self.budget, self.limiter = budget, limiter
         self._slots = asyncio.Semaphore(settings.max_concurrent_runs)
         self._tasks: set[asyncio.Task[None]] = set()
@@ -41,17 +44,26 @@ class InvestigationService:
     def live(self) -> bool:
         return self.settings.live_enabled and self.budget.available()
 
-    def start(self, offer: dict[str, Any], ip: str, user: User | None) -> Run:
+    async def start(self, offer: dict[str, Any], ip: str, user: User | None) -> Run:
         if not self.settings.live_enabled:
             raise ServiceError(503, "Live checks are not configured on this server. Explore the example investigations instead.")
         if not self.budget.available():
             raise ServiceError(503, "The live demo has used up its model budget. The recorded investigations still work.")
+        paying = self.billing is not None and self.billing.enabled
+        if paying and user is None:
+            raise ServiceError(401, "Sign in to run a check. Each check uses credits you buy with PayPal.")
         blocked = self.limiter.check(ip)
         if blocked:
             raise ServiceError(429, blocked)
-        self.budget.claim()
         run = self.store.create(offer)
         run.user_id = user.id if user else None
+        if paying and user is not None and self.billing is not None:
+            try:
+                run.charged = await self.billing.charge(user, run.id)
+            except BillingError as exc:
+                self.store.discard(run.id)
+                raise ServiceError(exc.status, exc.message) from exc
+        self.budget.claim()
         task = asyncio.create_task(self._execute(run))
         self._tasks.add(task)
         task.add_done_callback(self._tasks.discard)
@@ -68,6 +80,8 @@ class InvestigationService:
             self.store.persist(run)
             await self.repo.record_spend(run.id, cost)
             await self.repo.save(run)
+            if run.charged and run.status == "error" and run.user_id and self.billing is not None:
+                await self.billing.refund(run.user_id, run.id, run.charged)
 
     async def find(self, run_id: str) -> Run | None:
         run = self.store.get(run_id)

@@ -6,7 +6,7 @@ import { TierBadge } from "@/components/ui";
 import { cx } from "@/lib/cx";
 import type { StageKey } from "@/types";
 
-/** Small illustrated screens for each pipeline step, using the made-up "Orvel Logistics" message from the hero. */
+/** Small illustrated screens for each pipeline step, using a made-up supplier. */
 function Frame({ name, badge, children }: { name: string; badge?: ReactNode; children: ReactNode }) {
   return (
     <div className="panel overflow-hidden">
@@ -39,17 +39,17 @@ function Intake() {
   return (
     <Frame name="intake · nemotron-nano" badge={<TierBadge tier="nano" />}>
       <p className="rounded-xl bg-black/25 p-3 text-[13px] leading-relaxed text-bone-400">
-        “…remote data entry role at <span className="text-caution-300">$45/hr</span>. We&apos;ll{" "}
-        <span className="text-stop-300">mail you a check for equipment</span>…”
+        “…we are a <span className="text-caution-300">factory with 200 workers</span>. Licence 91440300…{" "}
+        <span className="text-stop-300">pay 100% in advance to Mr. Li Wei</span>…”
       </p>
       <div className="mt-4">
         {[
-          ["company", "Orvel Logistics"],
-          ["role", "Remote data entry"],
-          ["pay", "$45/hr", "text-caution-300"],
-          ["channel", "Telegram"],
-          ["asks you to", "Deposit a check, buy a laptop", "text-stop-300"],
-          ["claims found", "4"],
+          ["supplier", "Brightstar Textile Co., Ltd."],
+          ["claims to be", "Manufacturer", "text-caution-300"],
+          ["registration", "91440300MA5F…"],
+          ["certificate", "ISO 9001 · QMS-2231"],
+          ["pay to", "Mr. Li Wei (personal)", "text-stop-300"],
+          ["claims to check", "6"],
         ].map(([k, v, tone], i) => (
           <Row key={k} k={k ?? ""} v={v ?? ""} tone={tone} i={i} />
         ))}
@@ -58,83 +58,29 @@ function Intake() {
   );
 }
 
-function Research() {
-  const rows = [
-    { icon: Search, kind: "search", q: "Orvel Logistics official website", r: "orvel.com" },
-    { icon: Search, kind: "search", q: "Orvel Logistics recruitment scam warning", r: "3 results" },
-    { icon: ScanText, kind: "exact", q: "“mail you a check for equipment”", r: "2 matches" },
-    { icon: ListTree, kind: "crawl", q: "orvel.com/careers", r: "14 pages" },
-  ];
+function Investigate() {
   return (
-    <Frame name="research · tavily" badge={<span className="rounded-full bg-white/[0.05] px-2 py-0.5 font-mono text-[10.5px] text-bone-300">Tavily</span>}>
-      <ul className="space-y-2.5">
-        {rows.map(({ icon: Icon, kind, q, r }, i) => (
-          <li key={q} className="flex animate-fade-up items-center gap-3 rounded-xl border border-white/[0.05] bg-white/[0.02] px-3 py-2.5" style={{ animationDelay: `${0.1 + i * 0.12}s` }}>
-            <Icon className="size-4 shrink-0 text-bone-400" aria-hidden />
-            <span className="min-w-0 flex-1">
-              <span className="block truncate text-[13px] text-bone-100">{q}</span>
-              <span className="font-mono text-[10.5px] text-bone-600">{kind}</span>
+    <Frame name="investigate · rounds of lookups" badge={<TierBadge tier="super" />}>
+      <ol className="space-y-2.5 text-[13px]">
+        {[
+          ["L1", "Registry", "91440300… belongs to a different company", "text-stop-300", 0],
+          ["L8", "Customs log", "Under that company: 214 export shipments", "text-bone-200", 1],
+          ["L5", "Reverse-image search", "Factory photo also on hengli-garments.com", "text-caution-300", 0],
+          ["L13", "Who runs that site?", "Same company: the photo isn't theirs", "text-stop-300", 1],
+        ].map(([id, tool, result, tone, depth], i) => (
+          <li
+            key={String(id)}
+            className="flex animate-fade-up items-start gap-3 rounded-xl bg-black/25 px-3 py-2"
+            style={{ marginLeft: Number(depth) * 20, animationDelay: `${0.15 + i * 0.1}s` }}
+          >
+            <span className="font-mono text-[11px] text-bone-500">{id}</span>
+            <span className="min-w-0">
+              <span className="block text-bone-300">{tool}</span>
+              <span className={cx("block", String(tone))}>{result}</span>
             </span>
-            <span className="shrink-0 font-mono text-[11px] text-brand-300">{r}</span>
           </li>
         ))}
-      </ul>
-      <p className="mt-4 text-xs text-bone-500">No “data entry” role on the official careers pages.</p>
-    </Frame>
-  );
-}
-
-function Forensics() {
-  const domains = [
-    { d: "orvel.com", age: "Registered 2009", years: 1, tone: "bg-brand-400", note: "Official site" },
-    { d: "orvel-careers.co", age: "Registered 9 days ago", years: 0.02, tone: "bg-stop-400", note: "Sender's domain" },
-  ];
-  return (
-    <Frame name="forensics · rdap" badge={<span className="rounded-full bg-white/[0.05] px-2 py-0.5 font-mono text-[10.5px] text-bone-300">RDAP</span>}>
-      <ul className="space-y-5">
-        {domains.map((x, i) => (
-          <li key={x.d} className="animate-fade-up" style={{ animationDelay: `${0.15 + i * 0.15}s` }}>
-            <div className="flex items-baseline justify-between gap-3">
-              <span className="font-mono text-sm text-bone-50">{x.d}</span>
-              <span className="text-[11px] text-bone-500">{x.note}</span>
-            </div>
-            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
-              <div className={cx("h-full origin-left rounded-full", x.tone)} style={{ width: `${Math.max(2, x.years * 100)}%` }} />
-            </div>
-            <p className="mt-1.5 font-mono text-[11px] text-bone-400">{x.age}</p>
-          </li>
-        ))}
-      </ul>
-      <div className="mt-5 rounded-xl border border-stop-500/25 bg-stop-500/[0.06] px-3 py-2.5 text-[13px] text-stop-200">
-        The sender&apos;s domain doesn&apos;t match orvel.com and is brand new.
-      </div>
-    </Frame>
-  );
-}
-
-function Verify() {
-  return (
-    <Frame name="verify · nano → super" badge={<TierBadge tier="super" />}>
-      <p className="text-[13px] text-bone-100">“Lena Hart is a recruiter at Orvel Logistics.”</p>
-      <div className="mt-4 space-y-2.5">
-        <div className="flex animate-fade-up items-center gap-3 rounded-xl border border-caution-400/20 bg-caution-400/[0.04] px-3 py-2.5" style={{ animationDelay: "0.1s" }}>
-          <CircleQuestionMark className="size-4 text-caution-300" aria-hidden />
-          <span className="flex-1 text-[13px] text-caution-200">Inconclusive · 52% sure</span>
-          <TierBadge tier="nano" prefix="" className="text-[10px]" />
-        </div>
-        <div className="flex items-center gap-2 pl-4 font-mono text-[10.5px] text-bone-500">
-          <ArrowRight className="size-3 rotate-90" aria-hidden /> unsure, so escalated with a fresh search
-        </div>
-        <div className="flex animate-fade-up items-center gap-3 rounded-xl border border-stop-500/25 bg-stop-500/[0.05] px-3 py-2.5" style={{ animationDelay: "0.45s" }}>
-          <CircleX className="size-4 text-stop-300" aria-hidden />
-          <span className="flex-1 text-[13px] text-stop-200">Contradicted · 86% sure</span>
-          <TierBadge tier="super" prefix="" className="text-[10px]" />
-        </div>
-      </div>
-      <blockquote className="mt-4 animate-fade-up rounded-lg border-l-2 border-white/10 bg-black/25 px-3 py-2 text-xs text-bone-300" style={{ animationDelay: "0.7s" }}>
-        “We never ask candidates to buy equipment or deposit checks.”{" "}
-        <span className="font-mono text-[10.5px] text-brand-300">S4</span>
-      </blockquote>
+      </ol>
     </Frame>
   );
 }
@@ -143,12 +89,12 @@ function Judge() {
   return (
     <Frame name="judge · nemotron-ultra" badge={<TierBadge tier="ultra" />}>
       <div className="rounded-xl bg-black/30 p-4 font-mono text-[12px] leading-relaxed text-bone-400">
-        <p className="animate-fade-up">The sender writes from a domain registered 9 days ago [F4] that isn&apos;t orvel.com.</p>
+        <p className="animate-fade-up">The registration number belongs to Dongguan Hengli Garments, not Brightstar [F1], and the same company&apos;s photo and ISO certificate are on the invoice [F5, F6].</p>
         <p className="mt-2 animate-fade-up" style={{ animationDelay: "0.3s" }}>
-          The equipment-check request matches a known fake-check pattern [F1], and Orvel says it never does this [C1, S4].
+          The factory address is a residential block [F4] and the deposit would go to a personal account [F3].
         </p>
         <p className="mt-2 animate-fade-up" style={{ animationDelay: "0.6s" }}>
-          Nothing ties Lena Hart to the company<span className="ml-0.5 inline-block h-3 w-1.5 animate-caret bg-brand-400 align-middle" />
+          Nothing ties Brightstar to the factory it shows<span className="ml-0.5 inline-block h-3 w-1.5 animate-caret bg-brand-400 align-middle" />
         </p>
       </div>
       <div className="mt-4 flex animate-fade-up items-center justify-between rounded-xl border border-stop-500/30 bg-stop-500/[0.06] px-4 py-3" style={{ animationDelay: "0.9s" }}>
@@ -164,7 +110,7 @@ function Challenge() {
     <Frame name="challenge · nemotron-super" badge={<TierBadge tier="super" />}>
       <p className="font-mono text-[11px] tracking-[0.1em] text-bone-500 uppercase">Trying to prove “Stop” wrong</p>
       <div className="mt-3 space-y-2">
-        {["Lena Hart Orvel Logistics recruiter", "orvel.com careers remote data entry"].map((q, i) => (
+        {["Brightstar Hengli Garments group company", "Brightstar Textile reviews complaints"].map((q, i) => (
           <div
             key={q}
             className="flex animate-fade-up items-center gap-2.5 rounded-lg bg-black/25 px-3 py-2 text-[13px] text-bone-300"
@@ -176,11 +122,11 @@ function Challenge() {
         ))}
       </div>
       <p className="mt-4 animate-fade-up rounded-xl border border-white/[0.06] bg-black/25 p-3 text-[13px] leading-relaxed text-bone-300" style={{ animationDelay: "0.45s" }}>
-        <span className="text-bone-500">Best case against it: </span>a new recruiter might not be listed yet. Weak, because Orvel says it never sends
-        equipment checks <span className="font-mono text-[10.5px] text-brand-300">S4</span>.
+        <span className="text-bone-500">Best case against it: </span>Brightstar might be Hengli&apos;s export arm. Weak, because Hengli&apos;s registered scope
+        never mentions it <span className="font-mono text-[10.5px] text-brand-300">S4</span>.
       </p>
       <div className="mt-3 flex animate-fade-up items-center gap-2 rounded-xl border border-caution-400/25 bg-caution-400/[0.05] px-3 py-2.5 text-[12.5px] text-bone-200" style={{ animationDelay: "0.65s" }}>
-        <span className="min-w-0 flex-1">If Lena Hart is listed on orvel.com</span>
+        <span className="min-w-0 flex-1">If Hengli confirms Brightstar is its agent</span>
         <ArrowRight className="size-3.5 shrink-0 text-bone-500" aria-hidden />
         <span className="shrink-0 font-medium text-caution-300">Verify first</span>
       </div>
@@ -196,11 +142,11 @@ function Brief() {
   return (
     <Frame name="brief · nemotron-nano" badge={<TierBadge tier="nano" />}>
       <p className="text-[11px] text-bone-500">
-        Subject: <span className="text-bone-100">Quick check before we continue</span>
+        Subject: <span className="text-bone-100">Verification before the deposit</span>
       </p>
       <p className="mt-3 rounded-xl border border-white/[0.05] bg-black/25 p-4 text-[13px] leading-relaxed text-bone-300">
-        Hi Lena, thanks for reaching out. Before we go further, could you email me from your orvel.com address and send the link to this
-        role on Orvel&apos;s careers page? I&apos;m happy to do a video interview.
+        Hi, before I send a deposit, could you share a copy of your business licence, a bank letter showing the account is in your
+        company&apos;s name, and join a live video call from the factory? I&apos;m happy to arrange an inspection.
       </p>
       <div className="mt-4 flex items-center justify-between">
         <span className="flex items-center gap-1.5 text-xs text-brand-300">
@@ -216,9 +162,7 @@ function Brief() {
 
 const VISUALS: Record<StageKey, () => ReactNode> = {
   intake: Intake,
-  research: Research,
-  forensics: Forensics,
-  verify: Verify,
+  investigate: Investigate,
   judge: Judge,
   challenge: Challenge,
   brief: Brief,

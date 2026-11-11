@@ -14,7 +14,7 @@ export function reportToMarkdown(report: Report, link: string): string {
     `> ${j.headline}`,
     "",
     `**Confidence:** ${j.confidence}/100  `,
-    `**Offer:** ${[e.role, e.company].filter(Boolean).join(" at ") || "Unspecified offer"}  `,
+    `**Supplier:** ${e.supplier_name || "Unspecified supplier"}${e.claimed_type !== "unknown" ? ` (presents as a ${e.claimed_type})` : ""}  `,
     `**Report link:** ${link}`,
     "",
     "## In short",
@@ -24,7 +24,7 @@ export function reportToMarkdown(report: Report, link: string): string {
     `**Next step:** ${j.next_step}`,
   ];
   if (j.do_not.length) lines.push("", "**Don't, for now:**", ...j.do_not.map((d) => `- ${d}`));
-  if (j.verification_questions.length) lines.push("", "**Ask the sender:**", ...j.verification_questions.map((q) => `- ${q}`));
+  if (j.verification_questions.length) lines.push("", "**Ask the supplier:**", ...j.verification_questions.map((q) => `- ${q}`));
   if (brief.reply.body) lines.push("", "### Suggested reply", `**Subject:** ${brief.reply.subject}`, "", brief.reply.body);
   lines.push("", "## Assessment", j.assessment);
   if (j.guardrail) lines.push("", `_Guardrail: ${j.guardrail}_`);
@@ -50,17 +50,14 @@ export function reportToMarkdown(report: Report, link: string): string {
       if (c.quote && c.source) lines.push(`  > "${c.quote}" ([${c.source.domain}](${c.source.url}))`);
     }
   }
-  if (report.links?.length) {
-    lines.push("", "## Links in the message");
-    for (const l of report.links) {
-      const notes = [
-        l.official && "official site",
-        l.unregistered ? "domain not registered" : !l.reachable && "couldn't open",
-        l.presents_as && `uses ${l.presents_as}'s name`,
-        ...l.asks_for.map((a) => `asks for ${a.label}`),
-      ].filter(Boolean);
-      lines.push(`- ${l.url}: ${notes.join(", ") || "opened, nothing risky found"}`);
+  if (report.leads?.length) {
+    lines.push("", "## Chain of evidence");
+    for (const l of report.leads) {
+      const target = Object.entries(l.target).filter(([k]) => k !== "own_domains" && k !== "role").map(([, v]) => v).join(" · ");
+      const origin = l.parent_finding ? `, opened after ${l.parent_finding}` : "";
+      lines.push(`${"  ".repeat(l.depth)}- **[${l.id}] ${l.tool}** ${target} (${l.status}${origin}): ${l.why}${l.finding_ids.length ? ` → ${l.finding_ids.join(", ")}` : ""}`);
     }
+    if (report.stop_reason) lines.push("", `_${report.stop_reason}_`);
   }
   if (j.limitations) lines.push("", "## Limitations", j.limitations);
   lines.push("", "## Sources");
@@ -69,7 +66,7 @@ export function reportToMarkdown(report: Report, link: string): string {
     "",
     "---",
     `Investigated in ${t.duration_s}s with NVIDIA Nemotron on Nebius Token Factory (${t.calls.length} model calls, ${usd(t.cost_usd)}) and ${t.tavily.calls} Tavily calls.`,
-    "ProofBeforePay highlights risk signals; it cannot prove that an offer is fraudulent or genuine.",
+    "ProofBeforePay highlights risk signals; it cannot prove that a supplier is fraudulent or genuine.",
   );
   return lines.join("\n");
 }

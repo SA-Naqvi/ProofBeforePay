@@ -45,7 +45,7 @@ function DecisionMock() {
     <div className="flex h-full flex-col justify-between gap-8">
       <div className="flex items-start justify-between gap-6">
         <div>
-          <p className="font-mono text-[10.5px] tracking-[0.16em] text-bone-500 uppercase">Should you take the next step?</p>
+          <p className="font-mono text-[10.5px] tracking-[0.16em] text-bone-500 uppercase">Is it safe to pay the deposit?</p>
           <p className="mt-3 flex items-center gap-3 text-[clamp(3rem,6vw,4.75rem)] leading-none font-semibold tracking-[-0.055em] text-stop-300">
             <ShieldAlert className="size-10 shrink-0" aria-hidden />
             Stop.
@@ -60,13 +60,13 @@ function DecisionMock() {
         </div>
       </div>
       <p className="max-w-lg text-lg leading-snug font-medium text-balance text-bone-100">
-        The equipment check is a known fake-check pattern, and the sender&apos;s domain was registered nine days ago.
+        The licence belongs to a different company, the factory photos are someone else&apos;s, and the deposit would go to a personal account.
       </p>
       <div className="grid grid-cols-3 gap-4 border-t border-white/[0.06] pt-5">
         {[
-          ["Risk signals", "4", "text-stop-300"],
-          ["Claims verified", "0/4", "text-bone-50"],
-          ["Sources read", "17", "text-bone-50"],
+          ["Red flags", "6", "text-stop-300"],
+          ["Claims verified", "0/6", "text-bone-50"],
+          ["Lookups run", "12", "text-bone-50"],
         ].map(([k, v, tone]) => (
           <div key={k}>
             <p className="text-[11px] text-bone-500">{k}</p>
@@ -78,14 +78,14 @@ function DecisionMock() {
   );
 }
 
-const REPLY = "Hi Lena, before we go further, could you email me from your orvel.com address and link this role on Orvel's careers page? Happy to do a video call.";
+const REPLY = "Hi, before I pay a deposit, could you send a copy of your business licence, a bank letter showing the account is in your company's name, and join a live video call from the factory floor? I'm also happy to arrange a third-party inspection.";
 
 function ReplyMock() {
   return (
     <div className="rounded-2xl border border-white/[0.06] bg-black/25 p-4">
       <div className="flex items-center justify-between gap-3">
         <p className="text-[11px] text-bone-500">
-          Subject: <span className="text-bone-200">Quick check before we continue</span>
+          Subject: <span className="text-bone-200">Verification before the deposit</span>
         </p>
         <CopyButton text={REPLY} label="Copy" />
       </div>
@@ -96,14 +96,14 @@ function ReplyMock() {
 
 const TRAIL_TONE = { r: "#ff6f5e", g: "#9bd424", n: "#c9c1b1" } as const;
 const TRAIL_NODES = [
-  { id: "s1", x: 4, y: 18, w: 104, tag: "S4", text: "orvel.com", tone: "n" },
-  { id: "s2", x: 4, y: 74, w: 104, tag: "S9", text: "rdap.org", tone: "n" },
-  { id: "s3", x: 4, y: 130, w: 104, tag: "S2", text: "reddit.com", tone: "n" },
+  { id: "s1", x: 4, y: 18, w: 104, tag: "S3", text: "opencorporates", tone: "n" },
+  { id: "s2", x: 4, y: 74, w: 104, tag: "S7", text: "importyeti", tone: "n" },
+  { id: "s3", x: 4, y: 130, w: 104, tag: "S9", text: "hengli-garments", tone: "n" },
   { id: "c1", x: 144, y: 8, w: 128, tag: "C1", text: "Contradicted", tone: "r" },
-  { id: "f1", x: 144, y: 60, w: 128, tag: "F4", text: "Domain 9 days old", tone: "r" },
-  { id: "f2", x: 144, y: 112, w: 128, tag: "F1", text: "Equipment check", tone: "r" },
-  { id: "k1", x: 302, y: 34, w: 124, tag: "K1", text: "Never asks this", tone: "r" },
-  { id: "k2", x: 302, y: 98, w: 124, tag: "K2", text: "Lookalike sender", tone: "r" },
+  { id: "f1", x: 144, y: 60, w: 128, tag: "F2", text: "Customs: exporter", tone: "r" },
+  { id: "f2", x: 144, y: 112, w: 128, tag: "F5", text: "Photo reused", tone: "r" },
+  { id: "k1", x: 302, y: 34, w: 124, tag: "K1", text: "Licence not theirs", tone: "r" },
+  { id: "k2", x: 302, y: 98, w: 124, tag: "K2", text: "Photo not theirs", tone: "r" },
   { id: "v", x: 452, y: 58, w: 64, tag: "", text: "Stop.", tone: "r" },
 ] as const;
 const TRAIL_EDGES: [string, string, boolean][] = [
@@ -153,7 +153,7 @@ function ChallengeMock() {
   return (
     <div className="space-y-2">
       <p className="font-mono text-[10px] tracking-[0.12em] text-bone-500 uppercase">Trying to prove “Stop” wrong</p>
-      {["Lena Hart Orvel recruiter", "orvel.com careers data entry"].map((q, i) => (
+      {["Brightstar Hengli group company", "Brightstar Textile reviews"].map((q, i) => (
         <p
           key={q}
           className="flex items-center gap-2 rounded-lg bg-black/25 px-2.5 py-1.5 text-[12px] text-bone-300 transition-transform duration-700 ease-out-expo group-hover:translate-x-1"
@@ -164,7 +164,7 @@ function ChallengeMock() {
         </p>
       ))}
       <p className="flex items-center gap-1.5 pt-1 text-[11.5px] text-bone-400">
-        <span className="truncate">If she's listed on orvel.com</span>
+        <span className="truncate">If Hengli confirms it as an agent</span>
         <ArrowRight className="size-3 shrink-0" aria-hidden />
         <span className="shrink-0 text-caution-300">Verify first</span>
       </p>
@@ -213,7 +213,7 @@ function ReplayMock() {
       tween.kill();
     };
   }, []);
-  const steps = ["Read", "Search", "Domains", "Claims", "Judge", "Argue", "Brief"];
+  const steps = ["Read", "Follow", "Judge", "Argue", "Brief"];
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
@@ -260,12 +260,12 @@ export function Outcomes() {
             </Tile>
           </div>
           <div data-tile className="lg:col-span-3">
-            <Tile icon={<MailCheck className="size-4" />} title="A safe reply, ready to send" body="Polite and non-accusatory. It asks the sender to prove who they are and shares nothing about you.">
+            <Tile icon={<MailCheck className="size-4" />} title="A message that makes them prove it" body="Polite and non-accusatory. It asks the supplier for a licence copy, a bank letter and a live video, and shares nothing about you.">
               <ReplyMock />
             </Tile>
           </div>
           <div data-tile className="lg:col-span-3">
-            <Tile icon={<Route className="size-4" />} title="The Proof Trail" body="Click any source, claim or finding and the whole path from the evidence to the verdict lights up.">
+            <Tile icon={<Route className="size-4" />} title="The Proof Trail" body="Click any source, claim or finding and the whole path from the evidence to the verdict lights up. The chain of evidence shows which lookup opened which.">
               <TrailMock />
             </Tile>
           </div>

@@ -60,7 +60,7 @@ export function ContactForm() {
               <Check className="size-10" strokeWidth={3} aria-hidden />
             </motion.span>
             <h2 className="mt-6 text-3xl font-semibold tracking-[-0.04em] text-bone-50">Message sent.</h2>
-            <p className="mt-2 max-w-sm text-bone-400">Thanks, {values.name.split(" ")[0]}. We&apos;ll reply to {values.email}.</p>
+            <p className="mt-2 max-w-sm text-bone-400">Thanks, {(values.name || "").split(" ")[0]}. We&apos;ll reply to {values.email}.</p>
             <button
               type="button"
               onClick={() => {

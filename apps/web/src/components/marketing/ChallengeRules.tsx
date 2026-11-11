@@ -30,17 +30,17 @@ const OUTCOMES = [
   {
     icon: Ban,
     tone: "text-stop-300 border-stop-500/25 bg-stop-500/[0.06]",
-    title: "…but money keeps a Stop",
-    rule: "A request for money is a fact, not an opinion.",
-    body: "No web page or second opinion can argue away an upfront fee or a fake-check scheme.",
+    title: "…but hard red flags keep a Stop",
+    rule: "A licence that belongs to someone else is a fact, not an opinion.",
+    body: "No web page or second opinion can argue away a payment to a personal account, a mismatched registration or a borrowed certificate.",
   },
 ];
 
 const GUARDRAILS = [
-  { icon: ShieldOff, title: "No Proceed when money is asked for", body: "Or credentials, or ID documents, or when the message tries to instruct an AI checker." },
+  { icon: ShieldOff, title: "No Proceed with a hard red flag", body: "Payment to the wrong account, a mismatched licence or certificate, a factory in a residential block, or text that tries to instruct an AI checker." },
   { icon: Quote, title: "Quotes must be real", body: "A quote only appears if it's found word for word in the page it cites. Made-up citations are dropped." },
   { icon: Swords, title: "Findings get audited", body: "Super checks each of Ultra's findings against its sources and marks any that claim more than they say." },
-  { icon: Link2Off, title: "Links are never opened here", body: "Suspicious links are read through Tavily, so neither you nor our server ever loads them." },
+  { icon: Link2Off, title: "Pages are never opened here", body: "Listing links are read through Tavily and photos are traced by Google, so neither you nor our server ever loads them." },
 ];
 
 /** The second-opinion step and the rules that code enforces on the models. */

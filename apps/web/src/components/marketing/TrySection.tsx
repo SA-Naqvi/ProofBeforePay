@@ -8,10 +8,10 @@ import { useHealth } from "@/hooks/useBackend";
 import { Accent, SectionHeading } from "@/components/marketing/Section";
 
 const STEPS = [
-  { icon: MessageSquareText, text: "Paste the message, plus the sender's email if you have it" },
-  { icon: Globe, text: "Agents search the web, crawl the company's site and read domain records" },
-  { icon: ScanSearch, text: "Every claim is checked against what they find" },
-  { icon: Scale, text: "You get a decision, the evidence, and a safe reply to send" },
+  { icon: MessageSquareText, text: "Paste the invoice or listing, or fill in what you know: company, licence, address, certificate" },
+  { icon: Globe, text: "Lookups run on registries, customs logs, certificate directories, the map and the web" },
+  { icon: ScanSearch, text: "Every inconsistency opens a follow-up on another source, until the chain is complete" },
+  { icon: Scale, text: "You get a decision, the chain of evidence, and a message that makes the supplier prove itself" },
 ];
 
 export function TrySection() {
@@ -33,10 +33,10 @@ export function TrySection() {
             label="Try it"
             title={
               <>
-                Paste what they <Accent>sent</Accent> you.
+                Paste what the supplier <Accent>sent</Accent> you.
               </>
             }
-            lede="Emails, LinkedIn messages, Telegram or WhatsApp chats, Upwork invites. If someone wants you to reply, start, sign or pay, check it here first."
+            lede="A proforma invoice, a quotation, an Alibaba or IndiaMART listing, a WhatsApp chat, or just the company name and registration number. If a supplier wants a deposit, check it here first."
           />
           <Reveal as="ol" selector="li" className="mt-10 space-y-4" stagger={0.07}>
             {STEPS.map(({ icon: Icon, text }, i) => (

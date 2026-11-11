@@ -1,6 +1,8 @@
 import type {
   AdminOverview,
   AdminUser,
+  BillingState,
+  CaptureResult,
   ContactMessage,
   ContactTopic,
   FeedbackItem,
@@ -79,6 +81,12 @@ export const auth = {
   forgot: (body: { email: string }) => post<{ status: string }>("/auth/forgot", body),
   reset: (body: { email: string; code: string; password: string }) => post<{ user: User }>("/auth/reset", body),
   logout: () => post<{ status: string }>("/auth/logout"),
+};
+
+export const billing = {
+  get: () => request<BillingState>("/billing"),
+  createOrder: (packId: string) => post<{ order_id: string; approve_url: string }>("/billing/orders", { pack_id: packId }),
+  capture: (orderId: string) => post<CaptureResult>(`/billing/orders/${encodeURIComponent(orderId)}/capture`),
 };
 
 export const me = {

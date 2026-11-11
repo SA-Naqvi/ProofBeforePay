@@ -1,5 +1,5 @@
 export type TierName = "ultra" | "super" | "nano";
-export type StageKey = "intake" | "research" | "forensics" | "verify" | "judge" | "challenge" | "brief";
+export type StageKey = "intake" | "investigate" | "judge" | "challenge" | "brief";
 export type RunStatus = "queued" | "running" | "done" | "error";
 export type Decision = "PROCEED" | "VERIFY_FIRST" | "STOP";
 export type Polarity = "red" | "green" | "amber";
@@ -21,6 +21,7 @@ export interface Health {
   limits: { per_ip_per_hour: number };
   accounts?: boolean;
   email_test_mode?: boolean;
+  payments?: { enabled: boolean; environment: "sandbox" | "live" };
 }
 
 export interface LlmCall {
@@ -71,6 +72,42 @@ export interface Signal {
   detail: string;
   evidence: string;
   why: string;
+  /** The lookup that produced this finding, the sources it rests on, and the lookups it opened in turn. */
+  lead?: string | null;
+  sources?: string[];
+  spawned?: string[];
+  chain?: ChainHop[];
+}
+
+export interface ChainHop {
+  lead: string;
+  tool: LeadTool;
+  why: string;
+  via_finding: string | null;
+}
+
+export type LeadTool = "registry" | "trade" | "certificate" | "domain" | "address" | "image" | "web";
+
+export interface Lead {
+  id: string;
+  tool: LeadTool;
+  target: Record<string, string>;
+  why: string;
+  depth: number;
+  parent_lead: string | null;
+  parent_finding: string | null;
+  priority: number;
+  status: "open" | "running" | "done" | "unavailable" | "skipped";
+  summary: string;
+  finding_ids: string[];
+  source_ids: string[];
+  round: number | null;
+}
+
+export interface Identity {
+  name: string;
+  roles: string[];
+  sources: string[];
 }
 
 export interface Claim {
@@ -83,8 +120,10 @@ export interface Claim {
   quote?: string;
   note?: string;
   source?: Source | null;
-  checked_by?: TierName;
+  checked_by?: TierName | "code";
   escalated?: boolean;
+  key?: string | null;
+  signal_ids?: string[];
 }
 
 export interface Contacts {
@@ -94,16 +133,30 @@ export interface Contacts {
   domains: string[];
 }
 
+export interface Certificate {
+  standard: string;
+  number: string;
+  issuer: string;
+  holder: string;
+}
+
+/** What the supplier says about itself, as read from the paperwork and the form. */
 export interface Entities {
-  company: string;
-  recruiter_name: string;
-  recruiter_title: string;
-  role: string;
-  compensation: string;
-  work_mode: string;
-  channel: string;
+  supplier_name: string;
+  claimed_type: "manufacturer" | "trader" | "unknown";
+  country: string;
+  address: string;
+  registration_no: string;
+  products: string;
+  platform: string;
+  certificates: Certificate[];
+  deposit: string;
+  payment: { beneficiary: string; bank: string; method: string };
   requests: string[];
-  fingerprint: string;
+  domains: string[];
+  emails: string[];
+  image_urls: string[];
+  listing_url: string;
   contacts: Contacts;
 }
 
@@ -187,6 +240,13 @@ export interface OfferInput {
   message: string;
   sender: string;
   channel: string;
+  company?: string;
+  address?: string;
+  registration_no?: string;
+  certificate_no?: string;
+  deposit?: string;
+  listing_url?: string;
+  image_urls?: string[];
 }
 
 export interface Report {
@@ -194,7 +254,11 @@ export interface Report {
   input: OfferInput;
   generated_at: number;
   entities: Entities;
-  official_domain: string | null;
+  official_domain?: string | null;
+  identities?: Identity[];
+  leads?: Lead[];
+  rounds?: { round: number; leads: string[]; findings: number }[];
+  stop_reason?: string;
   signals: Signal[];
   claims: Claim[];
   judgement: Judgement;
@@ -325,7 +389,9 @@ export type RunEvent = { seq: number; t: number } & (
   | { type: "tavily_call"; call: TavilyCall }
   | { type: "source"; source: Source }
   | { type: "signal"; signal: Signal }
-  | { type: "entities"; entities: Entities; claims: Pick<Claim, "id" | "type" | "text">[] }
+  | { type: "entities"; entities: Entities; claims: Claim[] }
+  | { type: "lead"; lead: Lead }
+  | { type: "round"; round: number; leads: string[] }
   | { type: "official"; domain: string }
   | { type: "claim"; claim: Claim }
   | { type: "judgement"; judgement: Judgement }
@@ -334,3 +400,36 @@ export type RunEvent = { seq: number; t: number } & (
   | { type: "report"; report: Report }
   | { type: "error"; message: string }
 );
+
+export interface CreditPack {
+  id: string;
+  credits: number;
+  price: string;
+  currency: string;
+  label: string;
+}
+
+export interface LedgerRow {
+  delta: number;
+  reason: string;
+  ref: string;
+  created_at: string;
+}
+
+export interface BillingState {
+  enabled: boolean;
+  environment: "sandbox" | "live";
+  currency: string;
+  cost_per_check: number;
+  packs: CreditPack[];
+  balance?: number;
+  exempt?: boolean;
+  history?: LedgerRow[];
+}
+
+export interface CaptureResult {
+  status: "completed" | "pending";
+  credits: number;
+  balance: number;
+  already_applied: boolean;
+}

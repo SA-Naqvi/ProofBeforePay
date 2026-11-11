@@ -9,28 +9,28 @@ import { Accent, SectionHeading } from "./Section";
 
 const QUESTIONS = [
   {
-    q: "Is it free?",
-    a: "Yes. Each check costs us about two cents in model time on Nebius Token Factory, and the public demo has a daily limit so it stays that way.",
+    q: "What does it cost?",
+    a: "Each check uses one credit. You buy credits in packs through PayPal, they never expire, and a check that fails is refunded automatically. In the test (sandbox) setup no real money moves.",
   },
   {
-    q: "Can it prove a message is a scam?",
-    a: "No, and it never claims to. It finds risk signals in public evidence: registry records, the company's own pages, reports and the message itself. That's why there are three answers, and why every report tells you what to check yourself.",
+    q: "Can it prove a supplier is a fraud?",
+    a: "No, and it never claims to. It finds risk signals in public evidence: registry records, customs logs, certificate directories, the map and the paperwork itself. That's why there are three answers, and why every report tells you what to check yourself.",
   },
   {
-    q: "Do you keep the message I paste?",
-    a: "It's saved so your report link keeps working. If you're signed in, it's tied to your account and you can delete it, with everything else, from Settings. Leave out passwords, ID numbers and bank details; they're never needed.",
+    q: "Do you keep the invoice I paste?",
+    a: "It's saved so your report link keeps working. If you're signed in, it's tied to your account and you can delete it, with everything else, from Settings. Leave out your own passwords and bank details; they're never needed.",
   },
   {
-    q: "Why did a genuine offer get Verify first?",
-    a: "Usually because something important couldn't be confirmed, like the recruiter's name. Verify first means \"probably fine, check this one thing\". The report's \"What would change this verdict\" section says exactly what.",
+    q: "Why did a genuine supplier get Verify first?",
+    a: "Usually because something important couldn't be confirmed, like a certificate that isn't in any public directory. Verify first means \"probably fine, check this one thing\". The report's \"What would change this verdict\" section says exactly what.",
   },
   {
     q: "Which AI models does it use?",
-    a: "Three NVIDIA Nemotron 3 models on Nebius Token Factory: Nano for reading and first checks, Super for harder claims and for challenging the verdict, and Ultra once per check for the final judgement.",
+    a: "Three NVIDIA Nemotron 3 models on Nebius Token Factory: Nano for reading the pages each lookup returns, Super for proposing extra lookups and for challenging the verdict, and Ultra once per check for the final judgement.",
   },
   {
-    q: "Can I use it on messages that aren't about jobs?",
-    a: "It's tuned for job offers, recruiter messages and freelance clients. Other messages will work, but the checks are built around how hiring scams operate.",
+    q: "Is a trading company treated as a fraud?",
+    a: "No. Plenty of honest exporters are traders. The risk it looks for is a trader or middleman posing as a factory, a borrowed licence, borrowed photos, or a deposit going to someone other than the company.",
   },
 ];
 

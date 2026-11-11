@@ -33,10 +33,10 @@ export function FinalCta() {
       </div>
       <div className="relative mx-auto max-w-4xl px-5 text-center sm:px-8">
         <SplitReveal className="text-[clamp(2.6rem,6.5vw,5.6rem)] leading-[0.95] font-semibold tracking-[-0.055em] text-balance text-bone-50">
-          Got a message that feels a bit <span className="font-serif font-normal tracking-[-0.02em] text-brand-400 italic">off?</span>
+          Got a supplier that feels a bit <span className="font-serif font-normal tracking-[-0.02em] text-brand-400 italic">off?</span>
         </SplitReveal>
         <p className="mx-auto mt-6 max-w-xl text-[17px] leading-relaxed text-bone-400">
-          Check it before you reply, send your documents, or pay for anything. It&apos;s free, and it shows its work.
+          Check it before you send a deposit, sign a contract or book a shipment. It shows its work.
         </p>
         <div className="mt-10 flex justify-center">
           <Magnetic>
@@ -46,7 +46,7 @@ export function FinalCta() {
               className="btn roll-host inline-flex h-14 items-center gap-3 rounded-2xl bg-brand-500 px-8 text-base font-semibold text-ink-950 shadow-[0_0_0_1px_rgba(118,185,0,0.5),0_24px_60px_-18px_rgba(118,185,0,0.8)] [--btn-fill:var(--color-bone-50)]"
             >
               <span data-magnetic-inner className="inline-flex items-center gap-3">
-                <RollText text="Check an offer" />
+                <RollText text="Check a supplier" />
                 <ArrowRight className="size-5" aria-hidden />
               </span>
             </SectionLink>

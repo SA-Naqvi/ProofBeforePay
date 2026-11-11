@@ -6,6 +6,7 @@ import time
 from typing import Any
 
 from ..risk.scoring import SignalBoard
+from .casefile import CaseFile
 from ..tools.tavily_search import SourceRegistry
 
 TERMINAL_STATUSES = {"done", "error"}
@@ -16,6 +17,7 @@ class Run:
         self.input = input
         self.example = example
         self.user_id: str | None = None  # the signed-in owner, if any
+        self.charged = 0  # credits taken for this run, given back if it fails
         self.status = "queued"
         self.created_at = time.time()
         self.events: list[dict[str, Any]] = []
@@ -62,8 +64,9 @@ class Run:
             "decision": judgement.get("decision"),
             "headline": judgement.get("headline"),
             "confidence": judgement.get("confidence"),
-            "company": report.get("entities", {}).get("company"),
-            "role": report.get("entities", {}).get("role"),
+            # The history, compare and admin views label a check by "company" and "role": the supplier and what it sells.
+            "company": report.get("entities", {}).get("supplier_name"),
+            "role": report.get("entities", {}).get("products"),
             "challenge_outcome": (report.get("challenge") or {}).get("outcome"),
             "cost_usd": (report.get("telemetry") or {}).get("cost_usd"),
             "duration_s": (report.get("telemetry") or {}).get("duration_s"),
@@ -96,21 +99,25 @@ class Run:
 class Investigation:
     """Everything one run learns, handed from stage to stage."""
 
-    def __init__(self, run: Run) -> None:
+    def __init__(self, run: Run, *, max_leads: int = 16, max_depth: int = 3) -> None:
         self.run = run
         self.offer: dict[str, Any] = run.input
         self.sources = SourceRegistry(run)
         self.signals = SignalBoard(run)
-        self.entities: dict[str, Any] = {}
+        self.case = CaseFile(run, max_leads=max_leads, max_depth=max_depth)
+        self.profile: dict[str, Any] = {}  # what the supplier claims: name, address, registration, certificates, photos
         self.contacts: dict[str, list[str]] = {}
         self.claims: list[dict[str, Any]] = []
-        self.official: str | None = None
-        self.official_aliases: set[str] = set()
-        self.careers_pages: list[dict[str, Any]] = []
-        self.fingerprint_hits: list[dict[str, Any]] = []
+        self.assertions: list[dict[str, Any]] = []  # what independent sources say, each tied to a source and a lead
+        self.identities: dict[str, dict[str, Any]] = {}  # every name this supplier turned out to go by, and where it was seen
+        self.rounds: list[dict[str, Any]] = []
+        self.stop_reason: str = ""
         self.searched: list[str] = []
-        self.links: list[dict[str, Any]] = []
         self.judgement: dict[str, Any] = {}
         self.challenge: dict[str, Any] | None = None
         self.brief: dict[str, Any] = {}
         self.started = time.monotonic()
+
+    @property
+    def own_domains(self) -> set[str]:
+        return {d for d in self.profile.get("domains", [])}

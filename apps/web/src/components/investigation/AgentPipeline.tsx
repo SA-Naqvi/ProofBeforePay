@@ -4,9 +4,8 @@ import {
   Check,
   Coins,
   Cpu,
-  FingerprintPattern,
+  GitBranch,
   Globe,
-  ListChecks,
   PenLine,
   Scale,
   ScanText,
@@ -27,15 +26,13 @@ import type { LlmCall, StageKey, TavilyCall } from "@/types";
 
 export const STAGE_ICONS: Record<StageKey, LucideIcon> = {
   intake: ScanText,
-  research: Globe,
-  forensics: FingerprintPattern,
-  verify: ListChecks,
+  investigate: GitBranch,
   judge: Scale,
   challenge: Swords,
   brief: PenLine,
 };
 
-/** Which step a model or web call belongs to: "verify:C2" and "judge:repair" belong to verify and judge. */
+/** Which step a model or web call belongs to: "investigate:L3" and "judge:repair" belong to investigate and judge. */
 const stageOf = (step: string) => step.split(":")[0] as StageKey;
 
 type Fact = { label: string; value: string; tone?: string };
@@ -46,31 +43,22 @@ function facts(key: StageKey, s: LiveState): Fact[] {
     case "intake":
       return [
         { label: "Claims to check", value: String(s.claims.length) },
-        { label: "Company", value: s.entities?.company || "—" },
-        { label: "Role", value: s.entities?.role || "—" },
+        { label: "Supplier", value: s.entities?.supplier_name || "—" },
+        { label: "Claims to be", value: s.entities?.claimed_type && s.entities.claimed_type !== "unknown" ? s.entities.claimed_type : "—" },
       ];
-    case "research":
-      return [
-        { label: "Pages read", value: String(s.sources.length) },
-        { label: "Official site", value: s.official ?? (s.stages.research.state === "done" ? "Not found" : "—") },
-        { label: "Web searches", value: String(s.tavilyCalls.filter((c) => stageOf(c.step) === "research").length) },
-      ];
-    case "forensics": {
+    case "investigate": {
       const red = s.signals.filter((f) => f.polarity === "red").length;
       const green = s.signals.filter((f) => f.polarity === "green").length;
+      const followUps = s.leads.filter((l) => l.parent_lead).length;
       return [
-        { label: "Risk signals", value: String(red), tone: red ? "text-stop-300" : undefined },
+        { label: "Lookups", value: String(s.leads.length) },
+        { label: "Opened by a finding", value: String(followUps) },
+        { label: "Rounds", value: String(s.round || "—") },
+        { label: "Red flags", value: String(red), tone: red ? "text-stop-300" : undefined },
         { label: "Reassuring", value: String(green), tone: green ? "text-brand-300" : undefined },
-        { label: "Links opened", value: String(s.links.length) },
+        { label: "Contradicted", value: String(count("contradicted")), tone: count("contradicted") ? "text-stop-300" : undefined },
       ];
     }
-    case "verify":
-      return [
-        { label: "Verified", value: String(count("verified")), tone: count("verified") ? "text-brand-300" : undefined },
-        { label: "Contradicted", value: String(count("contradicted")), tone: count("contradicted") ? "text-stop-300" : undefined },
-        { label: "Unverified", value: String(count("inconclusive")) },
-        { label: "Sent to Super", value: String(s.claims.filter((c) => c.escalated).length) },
-      ];
     case "judge":
       return s.judgement
         ? [
@@ -107,7 +95,7 @@ function Counter({ icon: Icon, label, value, format }: { icon: LucideIcon; label
 }
 
 /**
- * The seven steps as a live map: which agent is working, what it called, what it found, and what it cost.
+ * The five steps as a live map: which agent is working, what it called, what it found, and what it cost.
  * Works for a live run, a paced replay, or a finished run loaded all at once.
  */
 export function AgentPipeline({ state, title = "Agent pipeline", running }: { state: LiveState; title?: string; running: boolean }) {
@@ -162,7 +150,7 @@ export function AgentPipeline({ state, title = "Agent pipeline", running }: { st
         </div>
       </div>
 
-      {/* The rail: seven agents, a beam that fills as they finish, and a pulse travelling while one works. */}
+      {/* The rail: five agents, a beam that fills as they finish, and a pulse travelling while one works. */}
       <div className="relative px-3 pt-6 pb-4 sm:px-5">
         <div className="absolute top-[52px] right-[calc(100%/14+12px)] left-[calc(100%/14+12px)] hidden h-[2px] rounded-full bg-white/[0.06] md:block" aria-hidden>
           <motion.div
@@ -173,7 +161,7 @@ export function AgentPipeline({ state, title = "Agent pipeline", running }: { st
           />
           {running && <span className="pipeline-pulse absolute top-1/2 size-2 -translate-y-1/2 rounded-full bg-brand-200 shadow-[0_0_14px_4px_rgba(155,212,36,0.6)]" style={{ left: `${progress * 100}%` }} />}
         </div>
-        <ol className="relative grid grid-cols-1 gap-2 md:grid-cols-7 md:gap-1">
+        <ol className="relative grid grid-cols-1 gap-2 md:grid-cols-5 md:gap-1">
           {STAGES.map((stage, i) => {
             const { state: st, durationMs } = state.stages[stage.key];
             const Icon = STAGE_ICONS[stage.key];
@@ -260,7 +248,7 @@ function StageDetail({ stageKey, state }: { stageKey: StageKey; state: LiveState
           <div className="flex flex-wrap items-center gap-2">
             <SectionLabel>Step {STAGES.indexOf(meta) + 1}</SectionLabel>
             {meta.tier && <TierBadge tier={meta.tier} />}
-            {stageKey === "verify" && <TierBadge tier="nano" />}
+            {stageKey === "investigate" && <TierBadge tier="super" />}
             {stageKey === "judge" && state.judgement && <DecisionBadge decision={state.judgement.decision} />}
           </div>
           <h4 className="mt-2 text-xl font-semibold tracking-[-0.03em] text-bone-50">{meta.title}</h4>
@@ -295,7 +283,7 @@ function StageDetail({ stageKey, state }: { stageKey: StageKey; state: LiveState
         <SectionLabel>Calls in this step</SectionLabel>
         {calls.length + web.length === 0 ? (
           <p className="mt-3 rounded-xl border border-dashed border-white/[0.08] px-4 py-6 text-center text-sm text-bone-500">
-            {st === "pending" ? "Not started yet." : st === "active" ? "Starting…" : stageKey === "forensics" ? "Registry lookups and rules run in code, so there are no model calls here." : "No calls."}
+            {st === "pending" ? "Not started yet." : st === "active" ? "Starting…" : stageKey === "investigate" ? "No calls yet." : "No calls."}
           </p>
         ) : (
           <ul className="scroll-slim mt-3 max-h-80 space-y-1.5 overflow-y-auto pr-1">

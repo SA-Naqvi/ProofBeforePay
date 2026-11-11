@@ -92,7 +92,7 @@ async def check_database() -> bool:
         await db.close()
     if spent is None or not accounts:
         print("[FAIL] Supabase: the tables aren't there yet. Run apps/api/migrations/0001_init.sql and then "
-              "0002_accounts.sql in the Supabase SQL Editor, and check SUPABASE_URL and SUPABASE_SECRET_KEY.")
+              "0002_accounts.sql and 0003_credits.sql in the Supabase SQL Editor, and check SUPABASE_URL and SUPABASE_SECRET_KEY.")
         return False
     print(f"[ OK ] Supabase connected; accounts ready; model spend recorded so far ${spent:.4f}")
     return True
@@ -109,8 +109,28 @@ def check_email() -> bool:
     return True
 
 
+async def check_paypal() -> bool:
+    if not settings.payments_enabled:
+        print("[skip] PAYPAL_CLIENT_ID / PAYPAL_CLIENT_SECRET aren't set; credits are off and checks are free")
+        return True
+    from app.services.paypal_gateway import PayPalGateway, PaymentError
+
+    pack = settings.credit_packs[0]
+    try:
+        # Creating an order (never approved or captured) proves the credentials work without taking any money.
+        order = await PayPalGateway(settings).create_order(
+            pack, reference="check-setup", return_url=f"{settings.public_url}/billing?paid=1", cancel_url=f"{settings.public_url}/billing?cancelled=1"
+        )
+    except PaymentError as exc:
+        print(f"[FAIL] PayPal ({settings.paypal_env}) rejected the credentials or the request: {exc}")
+        return False
+    where = "SANDBOX: no real money moves" if settings.paypal_env == "sandbox" else "LIVE: real money"
+    print(f"[ OK ] PayPal {settings.paypal_env} works (order {order['id']} created, not charged). {where}")
+    return True
+
+
 async def main() -> int:
-    results = [await check_models(), await check_tavily(), await check_database(), check_email()]
+    results = [await check_models(), await check_tavily(), await check_database(), check_email(), await check_paypal()]
     print("\nAll good. Start the server with: uvicorn app.main:app --reload" if all(results) else "\nFix the items marked FAIL.")
     return 0 if all(results) else 1
 

@@ -48,7 +48,7 @@ export function HistoryPage() {
           </Link>
         }
       >
-        Every offer you&apos;ve checked, with its verdict and the full report one click away.
+        Every supplier you&apos;ve checked, with its verdict and the full report one click away.
       </PageHeader>
 
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
@@ -92,8 +92,8 @@ export function HistoryPage() {
       ) : runs.error ? (
         <p className="rounded-2xl border border-stop-500/30 bg-stop-500/[0.06] px-4 py-3 text-sm text-stop-200">{runs.error}</p>
       ) : !runs.data?.length ? (
-        <EmptyState icon={History} title="Nothing here yet" action={<Link href="/investigate" className={buttonClasses("primary")}>Check your first offer</Link>}>
-          When you check an offer while signed in, it&apos;s saved here with its full evidence trail.
+        <EmptyState icon={History} title="Nothing here yet" action={<Link href="/investigate" className={buttonClasses("primary")}>Check your first supplier</Link>}>
+          When you check a supplier while signed in, it&apos;s saved here with its full evidence trail.
         </EmptyState>
       ) : (
         <motion.ul layout className="space-y-2">

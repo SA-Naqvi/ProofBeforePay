@@ -4,38 +4,37 @@ export interface Sample extends OfferInput {
   label: string;
 }
 
-/** Sample messages modeled on job- and payment-scam patterns described in public consumer-protection warnings. */
+/** Fictional suppliers modeled on the patterns in public import-fraud warnings: borrowed licences, borrowed photos, personal accounts. */
 export const SAMPLES: Sample[] = [
   {
-    label: "Remote job via Telegram",
-    channel: "Telegram",
-    sender: "amazon.talent.onboarding.desk@gmail.com",
-    message: `Hello,
+    label: "Factory with someone else's licence",
+    channel: "Alibaba",
+    sender: "sales@brightstar-textile.com",
+    company: "Shenzhen Brightstar Textile Manufacturing Co., Ltd.",
+    registration_no: "91440300MA5FXXXX1B",
+    message: `PROFORMA INVOICE No. BT-2291
 
-My name is Sarah Mitchell, Talent Acquisition Coordinator at Amazon. We came across your profile and are pleased to offer you the position of Remote Data Entry Specialist at $42 per hour, 20 hours a week. No prior experience is required and you can start immediately.
+Seller: Shenzhen Brightstar Textile Manufacturing Co., Ltd.
+Address: Room 1203, Building 5, Huaqiang North Road, Futian District, Shenzhen, China
+Business licence: 91440300MA5FXXXX1B
+Certification: ISO 9001, certificate QMS-2231
 
-Your interview will be conducted by our hiring manager over Telegram chat (@amz_talent_desk). After onboarding we will send you a check to purchase your home-office equipment from our approved vendor. A refundable onboarding fee of $85 is required to reserve your slot.
+We are a factory with 200 workers and 12 production lines, making cotton garments for export. 5,000 pcs organic cotton hoodies, USD 18,750.
 
-Kindly confirm within 24 hours as positions are limited. Complete your registration at amazon-careers-hiring.com.
+Payment: 100% T/T in advance. Because of our company's bank restrictions, please transfer to the personal account of our finance manager, Mr. Li Wei, at Bank of Communications. Price is valid for 48 hours only.
 
-Best regards,
-Sarah Mitchell
-Talent Acquisition, Amazon`,
+Contact: sales@brightstar-textile.com`,
   },
   {
-    label: "Freelance client overpayment",
-    channel: "Email",
-    sender: "quillmere.studio.projects@outlook.com",
-    message: `Hi there,
+    label: "Honest trading company",
+    channel: "IndiaMART",
+    sender: "exports@meridianhomeware.example",
+    company: "Meridian Homeware Exports Pvt Ltd",
+    message: `QUOTATION Q-1043
 
-I came across your portfolio on Behance and love your style. I'm David Laurent, project manager at Quillmere Design Studio. We need a full brand identity (logo, colour palette, social templates) for a new client, budget $1,800.
+From: Meridian Homeware Exports Pvt Ltd, Plot 14, Sector 8, Moradabad, Uttar Pradesh, India
+We are an export house sourcing brass and aluminium homeware from approved workshops in Moradabad. 2,000 sets brass serving trays, USD 9,400.
 
-To get started quickly, I'll mail you a cheque for $3,200 that covers your fee plus our print vendor's fee. Once it clears, please send the remaining $1,400 to our vendor through Zelle so they can begin printing.
-
-I travel a lot so WhatsApp is easiest. Send me your number and I'll message you there. Please reply today so we can lock in the schedule.
-
-Regards,
-David Laurent
-Quillmere Design Studio`,
+Terms: 30% advance by T/T to the company account in the name of Meridian Homeware Exports Pvt Ltd, balance against copy of bill of lading. Third-party pre-shipment inspection is welcome and can be arranged at your cost.`,
   },
 ];

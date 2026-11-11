@@ -7,9 +7,9 @@ import { LogoMark } from "@/components/layout/Logo";
 import { gsap, MOTION_OK, useGSAP } from "@/lib/gsap";
 
 const CHIPS = [
-  { icon: ShieldAlert, tone: "text-stop-300 border-stop-500/30 bg-stop-500/[0.08]", label: "Asks for an $85 fee", pos: "top-[16%] left-[8%]" },
-  { icon: Globe, tone: "text-caution-300 border-caution-400/30 bg-caution-400/[0.07]", label: "Domain registered 9 days ago", pos: "top-[30%] right-[6%]" },
-  { icon: CircleCheck, tone: "text-brand-300 border-brand-500/30 bg-brand-500/[0.08]", label: "Role listed on the official site", pos: "bottom-[30%] left-[4%]" },
+  { icon: ShieldAlert, tone: "text-stop-300 border-stop-500/30 bg-stop-500/[0.08]", label: "Pay to a personal account", pos: "top-[16%] left-[8%]" },
+  { icon: Globe, tone: "text-caution-300 border-caution-400/30 bg-caution-400/[0.07]", label: "Licence belongs to another company", pos: "top-[30%] right-[6%]" },
+  { icon: CircleCheck, tone: "text-brand-300 border-brand-500/30 bg-brand-500/[0.08]", label: "Registered address confirmed", pos: "bottom-[30%] left-[4%]" },
   { icon: TriangleAlert, tone: "text-sand-200 border-sand-300/30 bg-sand-300/[0.07]", label: "Super tried to prove it wrong", pos: "bottom-[27%] right-[8%]" },
 ];
 
@@ -97,7 +97,7 @@ export function AuthShell({ children }: { children: ReactNode }) {
           <p className="max-w-md text-2xl leading-snug font-semibold tracking-[-0.03em] text-bone-50">
             Keep every check you run, with <span className="font-serif text-[1.1em] font-normal text-brand-300 italic">all</span> its evidence.
           </p>
-          <p className="mt-3 font-mono text-[11px] tracking-[0.14em] text-bone-500 uppercase">7 steps · 3 Nemotron models · about 2 cents a check</p>
+          <p className="mt-3 font-mono text-[11px] tracking-[0.14em] text-bone-500 uppercase">5 steps · 7 kinds of lookup · 3 Nemotron models</p>
         </div>
       </div>
     </div>

@@ -138,7 +138,9 @@ class WebResearch:
         )
         return results
 
-    async def extract(self, run: Run, urls: list[str], *, step: str, purpose: str) -> tuple[list[dict[str, Any]], list[str]]:
+    async def extract(
+        self, run: Run, urls: list[str], *, step: str, purpose: str, images: bool = False
+    ) -> tuple[list[dict[str, Any]], list[str]]:
         """Read pages through Tavily, so links from an untrusted message are never fetched by this server.
 
         Returns (pages that could be read, urls that could not).
@@ -155,7 +157,7 @@ class WebResearch:
         async with self._gate:
             try:
                 response = await self.client.extract(
-                    urls=urls, extract_depth="basic", format="text", include_usage=True, timeout=30
+                    urls=urls, extract_depth="basic", format="text", include_usage=True, include_images=images, timeout=30
                 )
                 results = [r for r in response.get("results", []) if r.get("url") and r.get("raw_content")]
                 failed = [str(f.get("url", "")) for f in response.get("failed_results", []) if isinstance(f, dict)]

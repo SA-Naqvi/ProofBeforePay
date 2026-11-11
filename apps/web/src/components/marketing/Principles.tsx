@@ -7,19 +7,19 @@ import { Accent, SectionHeading } from "@/components/marketing/Section";
 const PRINCIPLES = [
   {
     title: "Missing evidence isn't proof of fraud.",
-    body: "If the web has nothing on a company or a person, the claim is marked inconclusive. It is never counted as contradicted.",
+    body: "If a registry, customs log or certificate directory has nothing on a company, the claim is marked inconclusive. A lookup that couldn't run is shown as not checked. Neither is ever counted as contradicted.",
   },
   {
     title: "Quotes are checked against the page.",
     body: "A quote only appears in the report if those exact words are on the source it cites.",
   },
   {
-    title: "Money requests can't get a green light.",
-    body: "If the message asks for money, a rule in code blocks a Proceed verdict, whatever the model says.",
+    title: "Hard red flags can't get a green light.",
+    body: "If the deposit goes to a personal account, or a licence or certificate belongs to someone else, a rule in code blocks a Proceed verdict, whatever the model says.",
   },
   {
     title: "Signals, not accusations.",
-    body: "It never calls a company or a person a scammer. When a brand is being impersonated, the real company isn't the one at fault.",
+    body: "It never calls a company or a person a fraud. When a real factory's licence or photos are being borrowed, that factory isn't the one at fault.",
   },
 ];
 
@@ -36,7 +36,7 @@ export function Principles({ index = "06" }: { index?: string }) {
               Built to be <Accent>careful</Accent>, not just confident.
             </>
           }
-          lede="A wrong “this is a scam” can cost someone a real job. A wrong “looks fine” can cost them their savings. These rules are enforced in code."
+          lede="A wrong “this is a fraud” can cost you a good supplier. A wrong “looks fine” can cost you the deposit. These rules are enforced in code."
         />
         <Reveal as="ol" selector="li" stagger={0.08} className="mt-16 border-t border-white/[0.08]">
           {PRINCIPLES.map((p, i) => (

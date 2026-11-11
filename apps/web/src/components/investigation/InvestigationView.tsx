@@ -11,7 +11,8 @@ import { STAGES } from "@/lib/stages";
 import { DECISION_LABEL } from "@/features/decision-brief/markdown";
 import type { InvestigationDetail, OfferInput } from "@/types";
 import { useInvestigationStream, type LiveState } from "@/features/investigations/useInvestigationStream";
-import { ChallengePanel, LinksPanel } from "@/components/risk/Challenge";
+import { ChallengePanel } from "@/components/risk/Challenge";
+import { TrailPanel } from "@/components/risk/Trail";
 import { ClaimBoard } from "@/components/claims/ClaimBoard";
 import { SignalList } from "@/components/evidence/Evidence";
 import { ActivityLog, ReasoningStream, SourceList } from "@/components/evidence/Feeds";
@@ -57,7 +58,7 @@ export function InvestigationView() {
   // The browser tab follows the check, so people can switch away and see when it's done.
   const shown = mode ? live.report : detail?.report;
   let tabTitle: string | null = null;
-  if (shown) tabTitle = `${DECISION_LABEL[shown.judgement.decision]} · ${shown.entities.company || "Offer"} · ProofBeforePay`;
+  if (shown) tabTitle = `${DECISION_LABEL[shown.judgement.decision]} · ${shown.entities.supplier_name || "Supplier"} · ProofBeforePay`;
   else if (mode && detail) {
     const done = STAGES.filter((s) => live.stages[s.key].state === "done").length;
     const active = STAGES.find((s) => live.stages[s.key].state === "active");
@@ -142,7 +143,7 @@ function useElapsed(state: LiveState, ticking: boolean): number {
 function LiveBoard({ state, mode, input, onSkip }: { state: LiveState; mode: Mode; input: OfferInput; onSkip?: () => void }) {
   const running = state.status === "running" || state.status === "queued" || state.status === "connecting";
   const elapsed = useElapsed(state, mode === "live" && running);
-  const offer = state.entities ? [state.entities.role, state.entities.company].filter(Boolean).join(" at ") : "";
+  const offer = state.entities?.supplier_name ?? "";
   const opening = input.message.replace(/\s+/g, " ").trim();
   const title = offer || (opening.length > 90 ? `${opening.slice(0, 90)}…` : opening);
   const stageDone = (key: keyof LiveState["stages"]) => state.stages[key].state === "done";
@@ -190,7 +191,8 @@ function LiveBoard({ state, mode, input, onSkip }: { state: LiveState; mode: Mod
 
       <div className="grid items-start gap-6 lg:grid-cols-12">
         <div className="min-w-0 space-y-6 lg:col-span-7">
-          <SignalList signals={state.signals} waiting={running && !stageDone("forensics")} compact />
+          <TrailPanel leads={state.leads} signals={state.signals} waiting={running && !stageDone("investigate")} />
+          <SignalList signals={state.signals} waiting={running && !stageDone("investigate")} compact />
           <ClaimBoard claims={state.claims} waiting={running && !state.entities} />
           {showReasoning && <ReasoningStream stream={state.stream} active={state.stages.judge.state === "active"} />}
           {state.challenge && state.judgement && <ChallengePanel challenge={state.challenge} decision={state.judgement.decision} />}
@@ -205,7 +207,6 @@ function LiveBoard({ state, mode, input, onSkip }: { state: LiveState; mode: Mod
               byKind: state.tavilyCalls.reduce<Record<string, number>>((acc, c) => ({ ...acc, [c.kind]: (acc[c.kind] ?? 0) + 1 }), {}),
             }}
           />
-          <LinksPanel links={state.links} />
           <ActivityLog activity={state.activity} active={running} />
           <SourceList sources={state.sources} />
         </div>

@@ -43,9 +43,8 @@ export function SectionLink({
   );
 }
 
-const LINKS = [
+const LINKS: { href: string; label: string; hash?: string }[] = [
   { href: "/how-it-works", label: "How it works" },
-  { href: "/#examples", label: "Examples", hash: "#examples" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
@@ -119,7 +118,7 @@ export function Nav() {
         >
           <span data-magnetic-inner className="relative inline-flex items-center gap-1.5">
             {onHome ? <ArrowUpRight className="size-3.5 rotate-90" aria-hidden /> : <Plus className="size-3.5" aria-hidden />}
-            <RollText text="Check an offer" />
+            <RollText text="Check a supplier" />
           </span>
         </SectionLink>
       )}
@@ -231,7 +230,7 @@ export function Nav() {
                   onClick={() => setOpen(false)}
                   className="flex h-14 items-center justify-center gap-2 rounded-2xl bg-brand-500 text-base font-semibold text-ink-950"
                 >
-                  <Plus className="size-4" aria-hidden /> Check an offer
+                  <Plus className="size-4" aria-hidden /> Check a supplier
                 </Link>
               </motion.div>
             </div>

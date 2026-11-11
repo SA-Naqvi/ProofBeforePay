@@ -10,16 +10,20 @@ from ..core.security import RateLimiter, SlidingWindow, SpendGuard
 from ..db.base import Database
 from ..db.session import connect
 from ..llm.nebius_client import LLMRouter
+from ..repositories.billing_repo import BillingRepo
 from ..repositories.feedback_repo import FeedbackRepo
 from ..repositories.investigation_repo import InvestigationRepo
 from ..repositories.run_store import RunStore
 from ..repositories.user_repo import UserRepo
+from ..tools.adapters import ToolBox
 from ..tools.tavily_search import WebResearch
 from .admin_service import AdminService
 from .assistant_service import AssistantService
 from .auth_service import AuthService
+from .billing_service import BillingService
 from .email_service import EmailService
 from .investigation_service import InvestigationService
+from .paypal_gateway import PayPalGateway
 
 
 def _limits() -> dict[str, SlidingWindow]:
@@ -33,6 +37,7 @@ def _limits() -> dict[str, SlidingWindow]:
         "feedback": SlidingWindow(30, 3600),
         "ask": SlidingWindow(30, 3600),
         "transcribe": SlidingWindow(10, 3600),
+        "billing": SlidingWindow(20, 3600),
     }
 
 
@@ -51,6 +56,7 @@ class Runtime:
     auth: AuthService
     admin: AdminService
     assistant: AssistantService
+    billing: BillingService
     limits: dict[str, SlidingWindow] = field(default_factory=_limits)
 
 
@@ -62,6 +68,7 @@ def build(
     email: EmailService | None = None,
     store: RunStore | None = None,
     budget: SpendGuard | None = None,
+    gateway: PayPalGateway | None = None,
 ) -> Runtime:
     llm = LLMRouter(config)
     db = db or connect(config)
@@ -69,9 +76,14 @@ def build(
     runs, users, feedback = InvestigationRepo(db), UserRepo(db), FeedbackRepo(db)
     email = email or EmailService(config)
     budget = budget or SpendGuard(config.data_dir / "spend.json", config.max_spend_usd, config.run_reserve_usd)
-    pipeline = pipeline or Pipeline(llm, WebResearch(config.tavily_api_key), config.max_claims)
+    web = WebResearch(config.tavily_api_key)
+    pipeline = pipeline or Pipeline(
+        llm, web, config.max_claims, tools=ToolBox(web, config),
+        limits={"rounds": config.max_rounds, "leads": config.max_leads, "depth": config.max_depth},
+    )
+    billing = BillingService(config, BillingRepo(db), gateway or PayPalGateway(config))
     investigations = InvestigationService(
-        config, pipeline, store, runs, budget, RateLimiter(config.runs_per_ip_per_hour, config.max_runs_per_day)
+        config, pipeline, store, runs, budget, RateLimiter(config.runs_per_ip_per_hour, config.max_runs_per_day), billing
     )
     return Runtime(
         settings=config,
@@ -87,6 +99,7 @@ def build(
         auth=AuthService(users, runs, feedback, email, config),
         admin=AdminService(config, llm, db, runs, users, feedback, email, budget, store),
         assistant=AssistantService(config, llm, budget, runs, store),
+        billing=billing,
     )
 
 

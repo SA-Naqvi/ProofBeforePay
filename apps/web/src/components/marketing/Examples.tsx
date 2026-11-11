@@ -26,7 +26,7 @@ export function Examples() {
         <SectionHeading
           index="07"
           label="Recorded investigations"
-          title="Watch it work on real messages."
+          title="Watch it work on real suppliers."
           lede="Each of these was a full live run. Open the report, or replay it to watch the agents go step by step."
         />
         <div className="mt-14 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -49,7 +49,7 @@ export function Examples() {
                         <span className="font-mono text-[10.5px] text-bone-600">{dateTime(ex.created_at)}</span>
                       </div>
                       <p className="mt-5 text-sm font-medium text-bone-500">
-                        {[ex.role, ex.company].filter(Boolean).join(" · ") || ex.input?.channel || "Offer"}
+                        {[ex.role, ex.company].filter(Boolean).join(" · ") || ex.input?.channel || "Supplier"}
                       </p>
                       <p className="mt-1.5 line-clamp-3 text-[17px] leading-snug font-medium tracking-[-0.01em] text-bone-50">{ex.headline}</p>
                       <div className="mt-auto flex items-center gap-2 pt-6">

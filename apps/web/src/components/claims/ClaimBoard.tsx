@@ -95,7 +95,8 @@ function ClaimCard({ claim, index }: { claim: Claim; index: number }) {
                   nano → super
                 </span>
               )}
-              {claim.checked_by && claim.status !== "pending" && <TierBadge tier={claim.checked_by} prefix="" className="text-[10px]" />}
+              {claim.checked_by === "code" && claim.status !== "pending" && <span className="font-mono text-[10px] text-bone-500" title="Decided by rules in code, comparing the claim with what the sources say">checked by code</span>}
+              {claim.checked_by && claim.checked_by !== "code" && claim.status !== "pending" && <TierBadge tier={claim.checked_by} prefix="" className="text-[10px]" />}
             </span>
           </div>
           <p className="mt-1 text-sm text-bone-100">{claim.text}</p>

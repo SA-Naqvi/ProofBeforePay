@@ -4,7 +4,7 @@ import { ArrowUpRight, BriefcaseBusiness, Cpu, Database, GraduationCap, Mail, Pa
 import { GithubMark } from "@/components/layout/Logo";
 import { Ticker, Tilt } from "@/components/motion/interactive";
 import { Reveal, TextScrub } from "@/components/motion/reveal";
-import { FTC_URL, REPO_URL } from "@/lib/site";
+import { REPO_URL } from "@/lib/site";
 import { Accent, SectionHeading } from "./Section";
 
 export function AboutStory() {
@@ -13,7 +13,7 @@ export function AboutStory() {
       <div className="mx-auto max-w-5xl px-5 sm:px-8">
         <TextScrub
           className="text-[clamp(1.6rem,3.4vw,2.7rem)] leading-[1.18] font-semibold tracking-[-0.035em]"
-          text="The recruiter writes from a domain registered last week. The company's own careers page says it never asks candidates for money. The same message is already on a scam forum. *The evidence is out there.* It just takes an hour to find, and the offer *expires tomorrow.* So we built agents that do the digging in under a minute, and show every piece of their work."
+          text="The registration number belongs to another company. The ISO certificate is held by someone else. The factory photo is on a rival's website. *The evidence is out there.* But each fact only leads to the next when you carry it from one source to another, and the supplier wants a *30% deposit this week.* So we built an agent that follows the trail, and shows every step."
         />
       </div>
     </section>
@@ -21,11 +21,11 @@ export function AboutStory() {
 }
 
 const NUMBERS = [
-  { value: 501, format: (n: number) => `$${Math.round(n)}M`, label: "lost to job scams in the US in 2024", source: true },
-  { value: 7, format: (n: number) => String(Math.round(n)), label: "steps in every check, from reading the message to arguing with the verdict" },
+  { value: 7, format: (n: number) => String(Math.round(n)), label: "kinds of lookup: registries, customs, certificates, domains, maps, photos and the web" },
+  { value: 5, format: (n: number) => String(Math.round(n)), label: "steps in every check, the middle one a loop that follows its own findings" },
   { value: 3, format: (n: number) => String(Math.round(n)), label: "NVIDIA Nemotron models, each given the work that fits its size" },
-  { value: 2, format: (n: number) => `${Math.round(n)}¢`, label: "in model costs for a full check, measured on every run" },
-  { value: 59, format: (n: number) => `${Math.round(n)}%`, label: "cheaper than sending everything to the largest model" },
+  { value: 4, format: (n: number) => String(Math.round(n)), label: "rounds of follow-up at most, so every check ends and its cost is bounded" },
+  { value: 2, format: (n: number) => String(Math.round(n)), label: "models that have to agree before the answer is a Proceed" },
 ];
 
 export function AboutNumbers() {
@@ -39,14 +39,6 @@ export function AboutNumbers() {
             </p>
             <p className="mt-3 text-sm leading-relaxed text-bone-400">
               {n.label}
-              {n.source && (
-                <>
-                  {" "}
-                  <a href={FTC_URL} target="_blank" rel="noreferrer" className="whitespace-nowrap text-bone-500 underline underline-offset-4 hover:text-bone-200">
-                    (FTC)
-                  </a>
-                </>
-              )}
             </p>
           </div>
         ))}
@@ -56,9 +48,9 @@ export function AboutNumbers() {
 }
 
 const AUDIENCE = [
-  { icon: BriefcaseBusiness, title: "Job seekers", body: "Remote roles that pay too well, recruiters who only talk on Telegram, onboarding fees that are \"refundable\". Check before you reply." },
-  { icon: Palette, title: "Freelancers", body: "Clients who overpay by cheque and ask for the difference back, or want you to buy software from their vendor. Check before you start work." },
-  { icon: GraduationCap, title: "Students and first jobs", body: "The people targeted most, and the least likely to know what a real hiring process looks like. Every report explains its reasoning." },
+  { icon: BriefcaseBusiness, title: "Small importers", body: "Buying from Alibaba, IndiaMART or a regional directory, about to wire a 30% deposit to someone you've never met. Check before you pay." },
+  { icon: Palette, title: "Brands and resellers", body: "Sourcing private-label products from a \"factory\" that may be a trading company in disguise. Find out who actually makes the goods." },
+  { icon: GraduationCap, title: "First-time buyers", body: "The people targeted most, and the least likely to know what a real supplier file looks like. Every report explains its reasoning." },
 ];
 
 export function AboutAudience() {
@@ -70,7 +62,7 @@ export function AboutAudience() {
           label="Who it's for"
           title={
             <>
-              For anyone with a message that feels a bit <Accent>off.</Accent>
+              For anyone about to pay a supplier they <Accent>can&apos;t</Accent> verify.
             </>
           }
         />
@@ -95,7 +87,7 @@ export function AboutAudience() {
 const STACK = [
   { icon: Cpu, name: "NVIDIA Nemotron 3", role: "Nano reads and checks, Super re-checks and challenges, Ultra weighs everything once." },
   { icon: Zap, name: "Nebius Token Factory", role: "Runs all three Nemotron models behind one OpenAI-compatible API, metered per call." },
-  { icon: Search, name: "Tavily", role: "Search, exact-phrase search, careers-site crawling, and reading pages so we never open them ourselves." },
+  { icon: Search, name: "Tavily", role: "Scoped search of registries, customs logs and certificate directories, and reading pages so we never open them ourselves." },
   { icon: Database, name: "Supabase", role: "Postgres for accounts, saved investigations, the evidence trail and the spending ledger." },
   { icon: Mail, name: "Resend", role: "Delivers the one-time codes that verify your email and reset your password." },
   { icon: Server, name: "Next.js and FastAPI", role: "One container: the site you're reading, and the API that runs the agents and streams them live." },

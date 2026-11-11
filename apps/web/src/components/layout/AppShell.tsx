@@ -1,6 +1,6 @@
 "use client";
 
-import { GitCompareArrows, History, LayoutDashboard, LogOut, Menu, Plus, ScanSearch, Settings, ShieldCheck, ShieldX, X } from "lucide-react";
+import { Coins, GitCompareArrows, History, LayoutDashboard, LogOut, Menu, Plus, ScanSearch, Settings, ShieldCheck, ShieldX, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -12,6 +12,8 @@ import { ShellLoader } from "@/components/layout/ShellLoader";
 import { Avatar } from "@/components/layout/UserMenu";
 import { buttonClasses } from "@/components/ui";
 import { useHealth } from "@/hooks/useBackend";
+import { useApi } from "@/hooks/useApi";
+import { billing } from "@/lib/api-client";
 import { cx } from "@/lib/cx";
 import { signOut, useSession } from "@/stores/session";
 import type { User } from "@/types";
@@ -27,6 +29,7 @@ const NAV = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/investigate", label: "New check", icon: ScanSearch },
   { href: "/history", label: "Your checks", icon: History },
+  { href: "/billing", label: "Credits", icon: Coins },
   { href: "/compare", label: "Compare", icon: GitCompareArrows },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
@@ -35,6 +38,7 @@ function SidebarContent({ user, onNavigate }: { user: User; onNavigate?: () => v
   const pathname = usePathname();
   const router = useRouter();
   const health = useHealth();
+  const credits = useApi(() => billing.get(), [pathname]); // refreshed after every page change, so it follows each check
   const items = [...NAV, ...(user.role === "admin" ? [{ href: "/admin", label: "Admin", icon: ShieldCheck }] : [])];
 
   return (
@@ -79,6 +83,18 @@ function SidebarContent({ user, onNavigate }: { user: User; onNavigate?: () => v
       </nav>
 
       <div className="mt-auto space-y-3">
+        {credits.data?.enabled && (
+          <Link
+            href="/billing"
+            onClick={onNavigate}
+            className="flex items-center justify-between gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2.5 text-xs text-bone-300 transition-colors hover:bg-white/[0.05]"
+          >
+            <span className="flex items-center gap-2">
+              <Coins className="size-3.5 text-brand-300" aria-hidden /> Credits
+            </span>
+            <span className="font-mono text-bone-100">{credits.data.exempt ? "Unlimited" : (credits.data.balance ?? 0)}</span>
+          </Link>
+        )}
         <div className="flex items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2.5 text-xs text-bone-400">
           <span className="relative flex size-2">
             {health?.live && <span className="absolute inline-flex size-full animate-ping rounded-full bg-brand-400 opacity-60" />}

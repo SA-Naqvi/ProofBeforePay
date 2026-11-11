@@ -7,7 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "ProofBeforePay",
     short_name: "ProofBeforePay",
-    description: "Check a job offer or client message before it costs you. Every claim cited.",
+    description: "Check a supplier before you pay the deposit. Every claim cited.",
     start_url: "/",
     display: "standalone",
     background_color: "#080807",

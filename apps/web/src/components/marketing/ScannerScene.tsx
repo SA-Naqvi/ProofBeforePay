@@ -19,52 +19,52 @@ interface Scene {
   hits: { tone: Tone; label: string; ref: string }[];
 }
 
-// Orvel Logistics is made up. One message is a classic fake-check job scam, the other a normal recruiter email.
+// Both suppliers are made up. One is a classic borrowed-licence "factory", the other an honest trading company.
 const SCENES: Scene[] = [
   {
     decision: "STOP",
     confidence: 94,
-    name: "Lena Hart",
-    initials: "LH",
-    channel: "Telegram",
-    address: ["From ", { hit: 3, text: "lena.hart@orvel-careers.co" }],
+    name: "Brightstar Textile",
+    initials: "BT",
+    channel: "Alibaba chat",
+    address: ["From ", { hit: 3, text: "sales@brightstar-textile.com" }],
     body: [
-      "Hi! I'm Lena from the hiring team at Orvel Logistics. You've been picked for a remote data entry role at ",
-      { hit: 0, text: "$45/hr, no interview needed" },
-      ". We'll ",
-      { hit: 1, text: "mail you a check for equipment" },
-      ": deposit it and buy the laptop from our vendor. ",
-      { hit: 2, text: "Reply here on Telegram today" },
-      " to keep your spot.",
+      "Hi! We are ",
+      { hit: 1, text: "a factory with 200 workers" },
+      ". ",
+      { hit: 0, text: "Licence 91440300MA5F…" },
+      ", ISO 9001 certified. Your 5,000 hoodies are $18,750. Please ",
+      { hit: 2, text: "pay 100% in advance to our finance manager's personal account" },
+      ". Price valid 48 hours.",
     ],
     hits: [
-      { tone: "caution", label: "Pay far above the norm", ref: "F3" },
-      { tone: "stop", label: "Fake-check equipment scheme", ref: "F1" },
-      { tone: "caution", label: "Chat only, with a deadline", ref: "F2" },
-      { tone: "stop", label: "Domain registered 9 days ago", ref: "F4" },
+      { tone: "stop", label: "Licence belongs to another company", ref: "F1" },
+      { tone: "stop", label: "Factory address is a residential block", ref: "F4" },
+      { tone: "stop", label: "Paid to a personal account", ref: "F3" },
+      { tone: "caution", label: "Website domain 40 days old", ref: "F7" },
     ],
   },
   {
     decision: "PROCEED",
     confidence: 88,
-    name: "Maya Chen",
-    initials: "MC",
-    channel: "Email",
-    address: ["From ", { hit: 3, text: "maya.chen@orvel.com" }],
+    name: "Meridian Homeware",
+    initials: "MH",
+    channel: "IndiaMART",
+    address: ["From ", { hit: 3, text: "exports@meridianhomeware.example" }],
     body: [
-      "Hi Sam, I'm Maya, a recruiter at Orvel Logistics. Thanks for applying to the ",
-      { hit: 0, text: "Junior Data Analyst role on our careers page" },
-      ". Could we do a ",
-      { hit: 1, text: "30-minute video call" },
-      " with the team on Thursday? ",
-      { hit: 2, text: "I'll send the invite from our calendar" },
-      " once you pick a time.",
+      "Quotation for 2,000 brass serving trays, $9,400. We are an export house sourcing from approved workshops. Terms: ",
+      { hit: 0, text: "30% advance, balance against bill of lading" },
+      ", paid to ",
+      { hit: 1, text: "the account of Meridian Homeware Exports Pvt Ltd" },
+      ". ",
+      { hit: 2, text: "Third-party inspection is welcome" },
+      ".",
     ],
     hits: [
-      { tone: "go", label: "Role is on the careers page", ref: "C2" },
-      { tone: "go", label: "A real interview", ref: "C3" },
-      { tone: "go", label: "Nothing asked up front", ref: "F2" },
-      { tone: "go", label: "Official company domain", ref: "F1" },
+      { tone: "go", label: "Standard deposit terms", ref: "F2" },
+      { tone: "go", label: "Paid to the company's own account", ref: "F1" },
+      { tone: "go", label: "Inspection welcome", ref: "F3" },
+      { tone: "go", label: "Registered, with export history", ref: "C1" },
     ],
   },
 ];
@@ -97,8 +97,8 @@ function renderSegments(segments: Segment[], scene: Scene) {
 
 /**
  * The hero's 3D set piece, built from CSS 3D layers rather than WebGL so the text stays crisp:
- * a message card is scanned line by line, risk signals lift off it toward the viewer, and a decision stamp lands.
- * It alternates between a scam and a genuine message, because the product is not just a scam detector.
+ * a supplier's invoice is scanned line by line, risk signals lift off it toward the viewer, and a decision stamp lands.
+ * It alternates between a fraud and an honest supplier, because the product is not just a fraud detector.
  */
 export function ScannerScene() {
   const root = useRef<HTMLDivElement>(null);

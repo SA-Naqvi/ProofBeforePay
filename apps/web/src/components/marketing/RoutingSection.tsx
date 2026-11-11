@@ -13,10 +13,10 @@ import { useHealth } from "@/hooks/useBackend";
 import { Accent, SectionHeading } from "@/components/marketing/Section";
 
 const TASKS = [
-  { id: "intake", label: "Read the offer", to: "nano" },
-  { id: "c1", label: "Check claim C1", to: "nano" },
-  { id: "c2", label: "Check claim C2", to: "nano" },
-  { id: "c3", label: "Check claim C3", to: "nano" },
+  { id: "intake", label: "Read the paperwork", to: "nano" },
+  { id: "c1", label: "Read registry page L1", to: "nano" },
+  { id: "c2", label: "Read customs page L2", to: "nano" },
+  { id: "c3", label: "Read certificate page L4", to: "nano" },
   { id: "judge", label: "Weigh the evidence", to: "ultra" },
   { id: "brief", label: "Write the brief", to: "nano" },
 ] as const;
@@ -196,7 +196,7 @@ export function RoutingSection() {
               Small models do the legwork. <Accent>Ultra</Accent> makes the call.
             </>
           }
-          lede="Nano takes the quick, frequent jobs. When Nano isn't sure about a claim, Super checks it again with a fresh search. Ultra reads everything once and decides. Every call is metered, so each report shows its real cost next to what the same tokens would have cost on Ultra alone."
+          lede="Nano takes the quick, frequent jobs: reading the pages each lookup returns. When a finding is left open, Super proposes extra lookups. Ultra reads everything once and decides. Every call is metered, so each report shows its real cost next to what the same tokens would have cost on Ultra alone."
         />
 
         <Reveal className="mt-16" y={50}>

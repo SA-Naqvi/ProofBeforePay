@@ -46,20 +46,17 @@ export function Footer() {
             <span className="font-semibold tracking-tight">ProofBeforePay</span>
           </div>
           <p className="mt-5 max-w-md text-sm leading-relaxed text-bone-500">
-            ProofBeforePay points out risk signals using public evidence. It can't prove that an offer is a scam or that it is
-            genuine, so always confirm through the company's official channels before you pay or share documents.
+            ProofBeforePay points out risk signals using public evidence. It can't prove that a supplier is a fraud or that it is
+            genuine, so always confirm with a live video call, a third-party inspection and a bank letter before you pay a deposit.
           </p>
         </div>
         <FooterColumn title="Product">
           <SectionLink hash="#try" className="hover:text-bone-50">
-            Check an offer
+            Check a supplier
           </SectionLink>
           <Link href="/how-it-works" className="hover:text-bone-50">
             How it works
           </Link>
-          <SectionLink hash="#examples" className="hover:text-bone-50">
-            Recorded investigations
-          </SectionLink>
           <Link href="/dashboard" className="hover:text-bone-50">
             Dashboard
           </Link>

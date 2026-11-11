@@ -19,13 +19,13 @@ export default function AboutPage() {
         eyebrow="About"
         title={
           <>
-            Built for the offer that <Accent>expires</Accent> tonight.
+            Built for the deposit you&apos;re <Accent>about</Accent> to wire.
           </>
         }
-        lede="Most job and client scams can be caught with public evidence. Nobody has time to find it at 11pm, so ProofBeforePay sends seven agents to find it for you, and shows you every piece."
+        lede="Most supplier fraud leaves a trail in public records. Following it by hand takes hours, so ProofBeforePay runs the lookups for you, carries each finding to the next source, and shows you every step."
       >
         <Link href="/#try" className={buttonClasses("primary", "h-12 px-6")}>
-          Check an offer
+          Check a supplier
         </Link>
         <Link href="/how-it-works" className={buttonClasses("secondary", "h-12 px-6")}>
           See how it works

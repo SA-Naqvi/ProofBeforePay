@@ -36,7 +36,7 @@ async def create_investigation(
     body: InvestigationRequest, request: Request, user: User | None = Depends(optional_user)
 ) -> dict[str, str]:
     try:
-        run = runtime.current.investigations.start(body.model_dump(), client_ip(request), user)
+        run = await runtime.current.investigations.start(body.model_dump(), client_ip(request), user)
     except ServiceError as exc:
         raise HTTPException(exc.status, exc.message) from exc
     return {"id": run.id}

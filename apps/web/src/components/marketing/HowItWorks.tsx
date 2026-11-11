@@ -58,10 +58,10 @@ export function HowItWorks() {
           label="How it works"
           title={
             <>
-              Seven steps, three Nemotron models, and a verdict that has to <Accent>survive</Accent> an argument.
+              Five steps, three Nemotron models, and a verdict that has to <Accent>survive</Accent> an argument.
             </>
           }
-          lede="Each investigation runs the same seven steps. Code handles what code is good at, Tavily brings in the web, each Nemotron model gets the work that fits its size, and a second model tries to prove the first one wrong."
+          lede="Each investigation runs the same five steps, and the middle one loops. Code decides whether sources agree, Tavily and the other lookups bring in the evidence, each Nemotron model gets the work that fits its size, and a second model tries to prove the first one wrong."
         />
 
         <div className="mt-20 grid gap-12 lg:grid-cols-[1fr_1fr] lg:gap-20">
@@ -123,7 +123,7 @@ export function HowItWorks() {
                       {s.engine}
                     </span>
                   )}
-                  {s.key === "verify" && <TierBadge tier="nano" />}
+                  {s.key === "investigate" && <TierBadge tier="super" />}
                 </div>
                 <h3 data-step-copy className="mt-4 text-[clamp(1.7rem,3vw,2.5rem)] leading-[1.05] font-semibold tracking-[-0.04em] text-bone-50">
                   {s.title}

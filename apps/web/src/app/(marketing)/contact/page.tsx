@@ -15,8 +15,8 @@ export const metadata: Metadata = {
 const SIDE = [
   {
     icon: ScanSearch,
-    title: "Got a suspicious message?",
-    body: "Don't send it to us. Check it: you'll have an answer with evidence in about 40 seconds.",
+    title: "Got a supplier you don't trust?",
+    body: "Don't send it to us. Check it: paste the invoice and you'll get an answer with the evidence behind it.",
     link: { href: "/#try", label: "Check it now" },
   },
   { icon: MessageSquareText, title: "We read everything", body: "Every message lands in our dashboard and our inbox. Feedback on a report helps tune the agents." },

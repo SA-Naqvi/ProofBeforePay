@@ -55,6 +55,35 @@ def _auth_secret(data_dir: Path) -> str:
         return value
 
 
+@dataclass(frozen=True)
+class CreditPack:
+    """A bundle of credits for sale. Price and size live on the server, never in the request."""
+
+    id: str
+    credits: int
+    price: str  # decimal string in the shop currency, e.g. "12.00"
+    label: str
+
+    def public(self, currency: str) -> dict:
+        return {"id": self.id, "credits": self.credits, "price": self.price, "currency": currency, "label": self.label}
+
+
+DEFAULT_PACKS = "starter:5:5.00:Starter,standard:15:12.00:Standard,bulk:40:28.00:Bulk"
+
+
+def _packs(raw: str) -> tuple[CreditPack, ...]:
+    """CREDIT_PACKS="id:credits:price:Label,…" (each price a decimal with two places)."""
+    packs = []
+    for part in raw.split(","):
+        fields = [f.strip() for f in part.split(":")]
+        if len(fields) < 3 or not fields[0]:
+            continue
+        credits, price = int(fields[1]), f"{float(fields[2]):.2f}"
+        if credits > 0 and float(price) > 0:
+            packs.append(CreditPack(fields[0], credits, price, fields[3] if len(fields) > 3 else fields[0].title()))
+    return tuple(packs)
+
+
 @dataclass
 class Tier:
     """One rung of the model ladder. Prices are USD per 1M tokens."""
@@ -109,6 +138,27 @@ class Settings:
     demo_admin_email: str
     demo_login: bool
     email_test_inbox: str
+    # The investigation loop's budget: how many rounds of follow-up it may run, how many leads it may open in
+    # total, and how many hops deep a lead may be from the original claim.
+    max_rounds: int = 4
+    max_leads: int = 16
+    max_depth: int = 3
+    # Optional keyed sources. Without them those leads are reported as "not checked", never as evidence either way.
+    google_vision_api_key: str = ""
+    opencorporates_api_key: str = ""
+    # PayPal (Orders v2, through the APIMatic-generated paypal-server-sdk). Without a client id and secret, credits are
+    # switched off and checks stay free. PAYPAL_ENV=sandbox uses PayPal's test environment: no real money moves.
+    paypal_client_id: str = ""
+    paypal_client_secret: str = ""
+    paypal_env: str = "sandbox"
+    paypal_currency: str = "USD"
+    credit_packs: tuple[CreditPack, ...] = ()
+    credits_per_check: int = 1
+    starting_credits: int = 0
+
+    @property
+    def payments_enabled(self) -> bool:
+        return bool(self.paypal_client_id and self.paypal_client_secret)
 
     @property
     def email_configured(self) -> bool:
@@ -195,6 +245,18 @@ def load_settings() -> Settings:
         # won't deliver goes to this inbox instead, labelled with who it's for. Leave empty once a domain is verified.
         email_test_inbox=_env("EMAIL_TEST_INBOX").lower(),
         demo_login=_env("DEMO_LOGIN", "on").lower() not in ("off", "false", "0"),
+        max_rounds=_int("MAX_ROUNDS", 4),
+        max_leads=_int("MAX_LEADS", 16),
+        max_depth=_int("MAX_DEPTH", 3),
+        google_vision_api_key=_env("GOOGLE_VISION_API_KEY"),
+        opencorporates_api_key=_env("OPENCORPORATES_API_KEY"),
+        paypal_client_id=_env("PAYPAL_CLIENT_ID"),
+        paypal_client_secret=_env("PAYPAL_CLIENT_SECRET"),
+        paypal_env="live" if _env("PAYPAL_ENV").lower() == "live" else "sandbox",
+        paypal_currency=_env("PAYPAL_CURRENCY", "USD").upper(),
+        credit_packs=_packs(_env("CREDIT_PACKS", DEFAULT_PACKS)),
+        credits_per_check=max(1, _int("CREDITS_PER_CHECK", 1)),
+        starting_credits=max(0, _int("STARTING_CREDITS", 0)),
     )
 
 

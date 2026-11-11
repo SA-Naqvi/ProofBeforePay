@@ -12,18 +12,18 @@ const instrument = Instrument_Serif({ subsets: ["latin"], weight: "400", style: 
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://proofbeforepay-qaax.onrender.com"),
-  title: "ProofBeforePay · Check a job offer before it costs you",
+  title: "ProofBeforePay · Check a supplier before you pay the deposit",
   description:
-    "Paste a job offer or client message. AI agents built on NVIDIA Nemotron check the company, the sender, the domain and every claim, then tell you whether it's safe to take the next step.",
+    "Paste a supplier's invoice or listing. AI agents built on NVIDIA Nemotron check the company, its registration, customs records, certificates, address and photos, following every inconsistency to a verdict on whether it's safe to pay.",
   openGraph: {
     title: "ProofBeforePay",
-    description: "Check a job offer or client message before it costs you. Every claim cited.",
+    description: "Check a supplier before you pay the deposit. Every claim cited.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "ProofBeforePay",
-    description: "Check a job offer or client message before it costs you. Every claim cited.",
+    description: "Check a supplier before you pay the deposit. Every claim cited.",
   },
 };
 

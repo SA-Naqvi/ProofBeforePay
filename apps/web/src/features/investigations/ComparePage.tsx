@@ -21,7 +21,7 @@ const ROWS: Row[] = [
   { label: "Claims verified", value: (r) => r.claims.filter((c) => c.status === "verified").length, better: "high" },
   { label: "Claims contradicted", value: (r) => r.claims.filter((c) => c.status === "contradicted").length, better: "low" },
   { label: "Challenge", value: (r) => (r.challenge ? { holds: "Held up", weakened: "Weakened", overturned: "Changed" }[r.challenge.outcome] : "—") },
-  { label: "Official site", value: (r) => r.official_domain ?? "Not found" },
+  { label: "Lookups run", value: (r) => r.leads?.length ?? 0 },
   { label: "Sources read", value: (r) => r.sources.length },
   { label: "Time", value: (r) => duration(r.telemetry.duration_s * 1000) },
   { label: "Model cost", value: (r) => usd(r.telemetry.cost_usd) },
@@ -87,8 +87,8 @@ export function ComparePage() {
 
   return (
     <div>
-      <PageHeader eyebrow="Compare" title="Two offers, side by side">
-        Useful when two people contact you about similar roles, or you want to see why one offer passed and another didn&apos;t.
+      <PageHeader eyebrow="Compare" title="Two suppliers, side by side">
+        Useful when two suppliers quote for the same order, or you want to see why one passed and another didn&apos;t.
       </PageHeader>
 
       <div className="mb-4 grid grid-cols-[1fr_auto_1fr] items-center gap-3">

@@ -55,14 +55,15 @@ export function ReasoningStream({ stream, active }: { stream: LiveState["stream"
 }
 
 const PURPOSE_LABEL: Record<string, string> = {
-  official: "official site",
-  warning: "fraud warnings",
-  careers: "careers",
-  recruiter: "recruiter",
-  reports: "scam reports",
-  pay: "pay norms",
-  fingerprint: "exact wording",
-  verify: "claim check",
+  registry: "company registry",
+  trade: "customs records",
+  certificate: "certificate directory",
+  address: "address",
+  image: "photo search",
+  domain: "domain record",
+  web: "web search",
+  listing: "supplier listing",
+  challenge: "counter-search",
 };
 
 function ActivityRow({ item }: { item: Activity }) {

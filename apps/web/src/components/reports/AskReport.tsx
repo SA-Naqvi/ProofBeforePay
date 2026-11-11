@@ -20,8 +20,8 @@ interface Turn {
 
 function suggestions(decision: Decision): string[] {
   const why = `Why is this a ${DECISION_LABEL[decision]}?`;
-  if (decision === "PROCEED") return [why, "Is anything still worth checking?", "Is the pay realistic?", "How do I confirm the recruiter is real?"];
-  return [why, "What should I check first?", "Is the pay realistic?", "What would make this safe?"];
+  if (decision === "PROCEED") return [why, "Is anything still worth checking?", "Is a 30% deposit reasonable?", "How do I confirm the factory is real?"];
+  return [why, "What should I ask the supplier for?", "Could this supplier still be genuine?", "What would make this safe?"];
 }
 
 /** Shows an answer a few words at a time, the way a person would read it out. */
@@ -138,7 +138,7 @@ export function AskReport({ runId, decision }: { runId: string; decision: Decisi
             id="ask-report"
             value={draft}
             onChange={(e) => setDraft(e.target.value.slice(0, MAX))}
-            placeholder="Ask anything about this offer…"
+            placeholder="Ask anything about this supplier…"
             autoComplete="off"
             className="min-w-0 flex-1 bg-transparent px-2.5 py-1.5 text-sm text-bone-50 placeholder:text-bone-500 focus:outline-none"
           />

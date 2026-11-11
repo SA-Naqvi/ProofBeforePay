@@ -52,7 +52,7 @@ class ChallengePass:
                     tier="super",
                     step="challenge",
                     messages=prompts.challenge_messages(
-                        inv.offer, judgement, hypothesis, inv.signals.items, inv.claims, fresh, self._cited_sources(inv)
+                        inv.offer, judgement, hypothesis, inv.signals.items, inv.claims, inv.case.leads, fresh, self._cited_sources(inv)
                     ),
                     max_tokens=1500,
                 )
@@ -76,7 +76,10 @@ class ChallengePass:
     def _clean_challenge(
         self, data: dict[str, Any], inv: Investigation, hypothesis: str, queries: list[str], fresh: list[dict[str, Any]]
     ) -> dict[str, Any]:
-        known = {s["id"] for s in inv.signals.items} | {c["id"] for c in inv.claims} | {s["id"] for s in inv.sources.items}
+        known = (
+            {s["id"] for s in inv.signals.items} | {c["id"] for c in inv.claims} | {s["id"] for s in inv.sources.items}
+            | {lead["id"] for lead in inv.case.leads}
+        )
 
         def cited(value: Any, limit: int) -> str:
             # Drop citations to ids that don't exist rather than show dead links.

@@ -1,8 +1,9 @@
-"""The ProofBeforePay investigation: intake → research → forensics → claim checks → judgement → challenge → brief.
+"""The ProofBeforePay investigation: intake → investigate (a loop of lookups) → judgement → challenge → brief.
 
-Model routing: Nano reads the offer, runs first-pass claim checks and writes the brief; Super re-checks any claim Nano
-is unsure about with fresh evidence; Ultra makes the single final judgement over everything; then Super argues
-against that judgement with its own counter-searches, and code (agent/policies.py) decides what the challenge changes.
+Model routing: Nano reads the paperwork, reads each lookup's pages and writes the brief; Super proposes extra lookups when
+findings leave a question open; Ultra makes the single final judgement over everything; then Super argues against that
+judgement with its own counter-searches, and code (agent/policies.py) decides what the challenge changes.
+Whether two names, numbers or addresses agree is decided by code (agent/reconcile.py), never by a model.
 Each step lives in app/intelligence; this class runs them in order.
 """
 from __future__ import annotations
@@ -12,11 +13,10 @@ from typing import TYPE_CHECKING
 
 from ..intelligence.challenge_pass import ChallengePass
 from ..intelligence.claim_extractor import ClaimExtractor
-from ..intelligence.evidence_analyzer import EvidenceAnalyzer
-from ..intelligence.forensics import Forensics
+from ..intelligence.investigator import Investigator
 from ..intelligence.judge import Judge
 from ..intelligence.report_generator import ReportGenerator
-from ..intelligence.web_research import WebResearcher
+from ..tools.adapters import ToolBox
 from ..llm.nebius_client import LLMError
 from .state import Investigation
 from .workflow import PipelineError
@@ -28,22 +28,25 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger("proofbeforepay.pipeline")
 
-class Pipeline(ClaimExtractor, WebResearcher, Forensics, EvidenceAnalyzer, Judge, ChallengePass, ReportGenerator):
-    """Runs the seven steps for one run and turns failures into a message the user can act on."""
+class Pipeline(ClaimExtractor, Investigator, Judge, ChallengePass, ReportGenerator):
+    """Runs the five steps for one run and turns failures into a message the user can act on."""
 
-    def __init__(self, llm: LLMRouter, web: WebResearch, max_claims: int) -> None:
+    def __init__(
+        self, llm: LLMRouter, web: WebResearch, max_claims: int = 8, *, tools: ToolBox | None = None, limits: dict[str, int] | None = None
+    ) -> None:
         self.llm = llm
         self.web = web
         self.max_claims = max_claims
+        self.tools = tools or ToolBox(web)
+        # The loop's budget: rounds of lookups, total leads, and how many hops a lead may be from the original claim.
+        self.limits = {"rounds": 4, "leads": 16, "depth": 3, **(limits or {})}
 
     async def execute(self, run: Run) -> None:
         run.set_status("running")
-        inv = Investigation(run)
+        inv = Investigation(run, max_leads=self.limits["leads"], max_depth=self.limits["depth"])
         try:
             await self._intake(inv)
-            await self._research(inv)
-            await self._forensics(inv)
-            await self._verify(inv)
+            await self._investigate(inv)
             await self._judge(inv)
             await self._challenge(inv)
             await self._brief(inv)

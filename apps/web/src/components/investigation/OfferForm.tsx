@@ -5,12 +5,13 @@ import { AnimatePresence, motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useRef, useState, type ClipboardEvent, type DragEvent, type FormEvent, type KeyboardEvent } from "react";
 import { Magnetic, RollText, trackFillOrigin } from "@/components/motion/interactive";
-import { api } from "@/lib/api-client";
+import Link from "next/link";
+import { api, ApiError } from "@/lib/api-client";
 import { imageToDataUrl } from "@/lib/images";
 import { SAMPLES } from "@/lib/samples";
 import { cx, Spinner } from "@/components/ui";
 
-const CHANNELS = ["Email", "LinkedIn", "Telegram", "WhatsApp", "Upwork / Fiverr", "SMS", "Other"];
+const CHANNELS = ["Alibaba", "IndiaMART", "Made-in-China", "Email", "WhatsApp", "WeChat", "Other"];
 const MIN_LENGTH = 40;
 const MAX_LENGTH = 8000;
 
@@ -19,8 +20,11 @@ export function OfferForm({ live }: { live: boolean | null }) {
   const [message, setMessage] = useState("");
   const [sender, setSender] = useState("");
   const [channel, setChannel] = useState("");
+  const [details, setDetails] = useState({ company: "", registration_no: "", address: "", certificate_no: "", deposit: "", listing_url: "", photo: "" });
+  const setDetail = (key: keyof typeof details) => (e: { target: { value: string } }) => setDetails((d) => ({ ...d, [key]: e.target.value.slice(0, 300) }));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [action, setAction] = useState<{ href: string; label: string } | null>(null);
   const [reading, setReading] = useState<string | null>(null); // the screenshot being read, as a data URL
   const [fromImage, setFromImage] = useState(false);
   const [dragging, setDragging] = useState(false);
@@ -62,17 +66,33 @@ export function OfferForm({ live }: { live: boolean | null }) {
   async function submit(event?: FormEvent) {
     event?.preventDefault();
     if (busy) return;
-    if (message.trim().length < MIN_LENGTH) {
-      setError("Paste the whole message you received. A couple of sentences at least.");
+    const hasDetails = Boolean(details.company.trim() || details.registration_no.trim() || details.listing_url.trim());
+    if (message.trim().length < MIN_LENGTH && !hasDetails) {
+      setError("Paste the invoice or listing, or fill in the company name or registration number.");
       return;
     }
     setBusy(true);
     setError(null);
+    setAction(null);
     try {
-      const { id } = await api.create({ message: message.trim(), sender: sender.trim(), channel });
+      const { id } = await api.create({
+        message: message.trim(),
+        sender: sender.trim(),
+        channel,
+        company: details.company.trim(),
+        registration_no: details.registration_no.trim(),
+        address: details.address.trim(),
+        certificate_no: details.certificate_no.trim(),
+        deposit: details.deposit.trim(),
+        listing_url: details.listing_url.trim(),
+        image_urls: details.photo.trim() ? [details.photo.trim()] : [],
+      });
       router.push(`/investigations?id=${encodeURIComponent(id)}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      // Checks use credits bought with PayPal, so point people at the way forward.
+      if (err instanceof ApiError && err.status === 402) setAction({ href: "/billing", label: "Buy credits" });
+      if (err instanceof ApiError && err.status === 401) setAction({ href: "/login", label: "Sign in" });
       setBusy(false);
     }
   }
@@ -130,7 +150,7 @@ export function OfferForm({ live }: { live: boolean | null }) {
         </AnimatePresence>
         <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-brand-400/70 to-transparent opacity-0 transition-opacity duration-500 group-focus-within/field:opacity-100" />
         <label htmlFor="message" className="sr-only">
-          Message you received
+          Supplier invoice or listing
         </label>
         <textarea
           id="message"
@@ -141,7 +161,7 @@ export function OfferForm({ live }: { live: boolean | null }) {
           }}
           onKeyDown={onKeyDown}
           onPaste={onPaste}
-          placeholder="Paste the job offer, recruiter message or client email you received…"
+          placeholder="Paste the supplier's invoice, quotation, listing or chat…"
           rows={8}
           className="scroll-slim block w-full resize-y rounded-[20px] bg-transparent px-5 pt-4 pb-2 text-[15px] leading-relaxed text-bone-50 placeholder:text-bone-600 focus:outline-none"
         />
@@ -177,6 +197,7 @@ export function OfferForm({ live }: { live: boolean | null }) {
                   setMessage(sample.message);
                   setSender(sample.sender);
                   setChannel(sample.channel);
+                  setDetails((d) => ({ ...d, company: sample.company ?? "", registration_no: sample.registration_no ?? "", address: sample.address ?? "" }));
                   setError(null);
                 }}
                 className="btn rounded-full bg-white/[0.035] px-2.5 py-1 text-xs text-bone-200 ring-1 ring-white/[0.08] ring-inset transition active:scale-95"
@@ -199,17 +220,17 @@ export function OfferForm({ live }: { live: boolean | null }) {
 
       <div className="mt-2 grid gap-2 sm:grid-cols-[1fr_170px_auto]">
         <label className="sr-only" htmlFor="sender">
-          Sender email or profile
+          Supplier email or website
         </label>
         <input
           id="sender"
           value={sender}
           onChange={(e) => setSender(e.target.value.slice(0, 200))}
-          placeholder="Sender's email or profile link (optional)"
+          placeholder="Supplier's email or website (optional)"
           className="h-12 rounded-2xl border border-white/[0.06] bg-ink-900/90 px-4 text-sm text-bone-50 transition-colors placeholder:text-bone-600 focus:border-brand-500/45 focus:outline-none"
         />
         <label className="sr-only" htmlFor="channel">
-          Where you received it
+          Where you found the supplier
         </label>
         <select
           id="channel"
@@ -217,7 +238,7 @@ export function OfferForm({ live }: { live: boolean | null }) {
           onChange={(e) => setChannel(e.target.value)}
           className="h-12 rounded-2xl border border-white/[0.06] bg-ink-900/90 px-3 text-sm text-bone-200 transition-colors focus:border-brand-500/45 focus:outline-none"
         >
-          <option value="">Received via…</option>
+          <option value="">Found on…</option>
           {CHANNELS.map((c) => (
             <option key={c} value={c}>
               {c}
@@ -240,10 +261,41 @@ export function OfferForm({ live }: { live: boolean | null }) {
         </Magnetic>
       </div>
 
+      <details className="mt-2 rounded-2xl border border-white/[0.06] bg-ink-900/60 px-4 py-3 text-sm">
+        <summary className="cursor-pointer text-bone-300">Add details you already know (optional, makes the check sharper)</summary>
+        <div className="mt-3 grid gap-2 sm:grid-cols-2">
+          {(
+            [
+              ["company", "Company name"],
+              ["registration_no", "Business licence / registration number"],
+              ["address", "Factory or office address"],
+              ["certificate_no", "Certificate number (ISO, CE, BIS…)"],
+              ["deposit", "Deposit or payment terms"],
+              ["listing_url", "Alibaba / IndiaMART listing link"],
+              ["photo", "Link to a factory photo to trace"],
+            ] as const
+          ).map(([key, label]) => (
+            <input
+              key={key}
+              aria-label={label}
+              value={details[key]}
+              onChange={setDetail(key)}
+              placeholder={label}
+              className="h-11 rounded-xl border border-white/[0.06] bg-ink-900/90 px-3 text-sm text-bone-50 placeholder:text-bone-600 focus:border-brand-500/45 focus:outline-none"
+            />
+          ))}
+        </div>
+      </details>
+
       <div className="flex min-h-10 flex-wrap items-center justify-between gap-2 px-3 pt-2 text-xs">
         {error ? (
           <p role="alert" className="text-stop-300">
-            {error}
+            {error}{" "}
+            {action && (
+              <Link href={action.href} className="font-semibold text-bone-50 underline underline-offset-4">
+                {action.label}
+              </Link>
+            )}
           </p>
         ) : fromImage ? (
           <p className="flex items-center gap-1.5 text-brand-200">
@@ -255,7 +307,7 @@ export function OfferForm({ live }: { live: boolean | null }) {
         ) : (
           <p className="flex items-center gap-1.5 text-bone-500">
             <Lock className="size-3" aria-hidden />
-            Leave out passwords and bank details. The message is saved only so your report link works.
+            Leave out your own bank details and passwords. The paperwork is saved only so your report link works.
           </p>
         )}
         <span className="hidden font-mono text-[10.5px] text-bone-600 sm:block">Ctrl + Enter to send</span>

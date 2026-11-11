@@ -67,12 +67,12 @@ export function Hero() {
             delay={0.15}
             className="mt-7 text-[clamp(2.9rem,6.4vw,6rem)] leading-[0.93] font-semibold tracking-[-0.055em] text-balance text-bone-50"
           >
-            Check the offer <span className="font-serif font-normal tracking-[-0.02em] text-brand-400 italic">before</span> it costs you.
+            Check the supplier <span className="font-serif font-normal tracking-[-0.02em] text-brand-400 italic">before</span> you pay.
           </SplitReveal>
 
           <p data-hero-copy className="mt-7 max-w-xl text-[17px] leading-relaxed text-pretty text-bone-400">
-            Paste a job offer or a client&apos;s message. ProofBeforePay looks into the company, the sender&apos;s domain, the
-            pay and the wording itself, then tells you if it&apos;s safe to take the next step. Every claim comes with a source.
+            Paste an invoice or a listing from Alibaba or IndiaMART. ProofBeforePay checks the registration, customs records, certificates,
+            address and photos, and follows every inconsistency to the end, then tells you if it&apos;s safe to pay the deposit.
           </p>
 
           <div data-hero-copy className="mt-9 flex flex-wrap items-center gap-3">
@@ -83,7 +83,7 @@ export function Hero() {
                 className="btn roll-host inline-flex h-13 items-center gap-2.5 rounded-2xl bg-brand-500 px-6 text-[15px] font-semibold text-ink-950 shadow-[0_0_0_1px_rgba(118,185,0,0.5),0_18px_40px_-14px_rgba(118,185,0,0.75)] [--btn-fill:var(--color-bone-50)]"
               >
                 <span data-magnetic-inner className="inline-flex items-center gap-2.5">
-                  <RollText text="Check an offer" />
+                  <RollText text="Check a supplier" />
                   <ArrowRight className="size-4" aria-hidden />
                 </span>
               </SectionLink>

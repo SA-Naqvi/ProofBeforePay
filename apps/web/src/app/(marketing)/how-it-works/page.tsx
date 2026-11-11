@@ -10,7 +10,7 @@ import { buttonClasses } from "@/lib/buttons";
 
 export const metadata: Metadata = {
   title: "How it works · ProofBeforePay",
-  description: "Seven steps, three NVIDIA Nemotron models on Nebius Token Factory, Tavily web research, and a verdict that has to survive a second opinion.",
+  description: "Five steps, three NVIDIA Nemotron models on Nebius Token Factory, rounds of registry, customs, map and web lookups, and a verdict that has to survive a second opinion.",
 };
 
 export default function HowItWorksPage() {
@@ -20,16 +20,16 @@ export default function HowItWorksPage() {
         eyebrow="How it works"
         title={
           <>
-            Seven agents, one <Accent>straight</Accent> answer.
+            An investigation that <Accent>follows</Accent> its own findings.
           </>
         }
-        lede="Code finds the hard facts, Tavily brings in the web, three NVIDIA Nemotron models each do the work that fits their size, and a second model tries to prove the first one wrong."
+        lede="Lookups bring in the registries, customs logs, map and the web. Code decides whether the sources agree with the supplier. Every inconsistency opens a follow-up on another source, and a second model tries to prove the verdict wrong."
       >
         <Link href="/#try" className={buttonClasses("primary", "h-12 px-6")}>
-          Check an offer
+          Check a supplier
         </Link>
-        <Link href="/investigations?id=remote-job-telegram&replay=1" className={buttonClasses("secondary", "h-12 px-6")}>
-          Watch a replay
+        <Link href="/about" className={buttonClasses("secondary", "h-12 px-6")}>
+          Who it&apos;s for
         </Link>
       </PageHero>
       <HowItWorks />

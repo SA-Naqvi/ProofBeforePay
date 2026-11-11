@@ -8,7 +8,6 @@ from ..agent import policies
 from ..agent.policies import _REF, DECISIONS, POLARITIES
 from ..agent.workflow import PipelineError, _log, _text, stage
 from ..llm import prompts
-from ..tools.domain_inspector import registrable
 
 if TYPE_CHECKING:
     from ..agent.state import Investigation
@@ -23,13 +22,11 @@ class Judge:
             _log(
                 run,
                 "judge",
-                f"Nemotron Ultra is weighing {len(inv.signals.items)} signals, {len(inv.claims)} claim checks "
-                f"and {len(inv.sources.items)} sources",
+                f"Nemotron Ultra is weighing {len(inv.signals.items)} findings, {len(inv.claims)} claims, "
+                f"{len(inv.case.leads)} lookups and {len(inv.sources.items)} sources",
             )
-            for source in inv.sources.items:
-                source["official"] = registrable(source["domain"]) in inv.official_aliases
             messages = prompts.judge_messages(
-                inv.offer, inv.entities, inv.signals.items, inv.claims, inv.sources.items[:30], date.today().isoformat()
+                inv.offer, inv.profile, inv.signals.items, inv.claims, inv.case.leads, self._ranked_sources(inv)[:30], date.today().isoformat()
             )
             try:
                 data = await self.llm.complete_json(
@@ -50,8 +47,18 @@ class Judge:
             inv.judgement = self._clean_judgement(data, inv)
             run.emit("judgement", judgement=inv.judgement)
 
+    @staticmethod
+    def _ranked_sources(inv: Investigation) -> list[dict[str, Any]]:
+        """Sources that findings and claims rest on come first, so the longest chains of evidence are never cut off."""
+        cited = list(dict.fromkeys([sid for s in inv.signals.items for sid in s["sources"]] + [c["source_id"] for c in inv.claims if c["source_id"]]))
+        first = [s for s in (inv.sources.get(i) for i in cited) if s]
+        return first + [s for s in inv.sources.items if s not in first]
+
     def _clean_judgement(self, data: dict[str, Any], inv: Investigation) -> dict[str, Any]:
-        known = {s["id"] for s in inv.signals.items} | {c["id"] for c in inv.claims} | {s["id"] for s in inv.sources.items}
+        known = (
+            {s["id"] for s in inv.signals.items} | {c["id"] for c in inv.claims} | {s["id"] for s in inv.sources.items}
+            | {lead["id"] for lead in inv.case.leads}
+        )
         decision = _text(data.get("decision"), 30).upper().replace(" ", "_").replace("-", "_")
         if decision not in DECISIONS:
             decision = "VERIFY_FIRST"

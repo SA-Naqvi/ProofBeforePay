@@ -38,17 +38,21 @@ class ReportGenerator:
             }
 
     def _assemble(self, inv: Investigation) -> dict[str, Any]:
+        for signal in inv.signals.items:
+            signal["chain"] = inv.case.chain(signal)  # the hops that led to this finding
         return {
             "version": METHODOLOGY_VERSION,
             "input": inv.offer,
             "generated_at": time.time(),
-            "entities": inv.entities,
-            "official_domain": inv.official,
+            "entities": inv.profile,
+            "identities": list(inv.identities.values()),
             "signals": inv.signals.items,
             "claims": inv.claims,
+            "leads": inv.case.public(),
+            "rounds": inv.rounds,
+            "stop_reason": inv.stop_reason,
             "judgement": inv.judgement,
             "challenge": inv.challenge,
-            "links": inv.links,
             "brief": inv.brief,
             "sources": [SourceRegistry.public(s) for s in inv.sources.items],
             "telemetry": summarize_telemetry(inv.run.events, self.llm.tiers, time.monotonic() - inv.started),

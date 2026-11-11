@@ -42,7 +42,7 @@ export function SignupForm() {
   return (
     <>
       <AuthHeading eyebrow="Free account" title="Create your account">
-        Your checks are saved, so you can come back to the evidence, compare offers, and watch how the agents worked.
+        Your checks are saved, so you can come back to the evidence, compare suppliers, and watch how the agents worked.
       </AuthHeading>
       <form onSubmit={submit} className="space-y-4" noValidate>
         <motion.div {...stagger(0)}>

@@ -57,7 +57,7 @@ export function Dashboard() {
     setSession((s) => s + 1);
   }
 
-  const firstName = user?.name.split(" ")[0];
+  const firstName = (user?.name || user?.email?.split("@")[0] || "").split(" ")[0];
 
   return (
     <div>
@@ -76,8 +76,8 @@ export function Dashboard() {
         }
       >
         {finished.length
-          ? "Here's what your agents have checked, and exactly how they worked on your latest offer."
-          : "Run your first check and watch seven agents take it apart. Until then, here's one they did earlier."}
+          ? "Here's what your agents have checked, and exactly how they worked on your latest supplier."
+          : "Run your first check and watch the agent follow the evidence, lookup by lookup."}
       </PageHeader>
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -169,8 +169,8 @@ export function Dashboard() {
               </ul>
             ) : (
               <div className="p-4">
-                <EmptyState icon={ScanSearch} title="No checks yet" action={<Link href="/investigate" className={buttonClasses("primary")}>Check an offer</Link>}>
-                  Paste a job offer or a client&apos;s message. It takes about 40 seconds.
+                <EmptyState icon={ScanSearch} title="No checks yet" action={<Link href="/investigate" className={buttonClasses("primary")}>Check a supplier</Link>}>
+                  Paste a supplier&apos;s invoice or listing, or just a company name and registration number.
                 </EmptyState>
               </div>
             )}

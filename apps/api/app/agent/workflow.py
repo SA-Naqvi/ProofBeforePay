@@ -9,8 +9,8 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from .state import Run
 
-# The seven steps, in order. The frontend's lib/stages.ts mirrors this list.
-STAGES = ("intake", "research", "forensics", "verify", "judge", "challenge", "brief")
+# The five steps, in order. The frontend's lib/stages.ts mirrors this list.
+STAGES = ("intake", "investigate", "judge", "challenge", "brief")
 
 class PipelineError(RuntimeError):
     """A failure whose message is safe and useful to show the user."""

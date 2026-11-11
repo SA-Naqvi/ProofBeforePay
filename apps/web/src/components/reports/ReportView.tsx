@@ -18,7 +18,8 @@ import { Reveal } from "@/components/motion/reveal";
 import { usd } from "@/lib/formatters";
 import { DECISION_LABEL, downloadText, reportToMarkdown } from "@/features/decision-brief/markdown";
 import type { Report } from "@/types";
-import { ChallengePanel, LinksPanel } from "@/components/risk/Challenge";
+import { ChallengePanel } from "@/components/risk/Challenge";
+import { TrailPanel } from "@/components/risk/Trail";
 import { ClaimBoard } from "@/components/claims/ClaimBoard";
 import { SignalList } from "@/components/evidence/Evidence";
 import { ProofTrail } from "@/components/evidence/ProofTrail";
@@ -59,7 +60,7 @@ function ActionPlan({ report }: { report: Report }) {
         )}
         {j.verification_questions.length > 0 && (
           <div>
-            <SectionLabel>Ask the sender</SectionLabel>
+            <SectionLabel>Ask the supplier</SectionLabel>
             <ul className="mt-3 space-y-2.5">
               {j.verification_questions.map((q) => (
                 <li key={q} className="flex gap-2.5 text-sm text-bone-300">
@@ -83,7 +84,7 @@ function SafeReply({ report }: { report: Report }) {
       <CardHeader
         icon={<MailCheck className="size-4" />}
         title="A safe reply you can send"
-        subtitle="Asks the sender to prove who they are. Shares nothing about you."
+        subtitle="Asks the supplier to prove who they are before any deposit. Shares nothing about you."
         right={<CopyButton text={subject ? `Subject: ${subject}\n\n${body}` : body} label="Copy reply" />}
       />
       <div className="p-5">
@@ -146,12 +147,14 @@ function Assessment({ report }: { report: Report }) {
 function OriginalMessage({ report }: { report: Report }) {
   const e = report.entities;
   const facts = [
-    ["Company", e.company],
-    ["Sender", [e.recruiter_name, e.recruiter_title].filter(Boolean).join(", ")],
-    ["Role", e.role],
-    ["Pay", e.compensation],
-    ["Channel", e.channel],
-    ["Official site", report.official_domain ?? ""],
+    ["Supplier", e.supplier_name],
+    ["Claims to be", e.claimed_type !== "unknown" ? e.claimed_type : ""],
+    ["Registration", e.registration_no],
+    ["Address", e.address],
+    ["Products", e.products],
+    ["Deposit terms", e.deposit],
+    ["Pay to", e.payment?.beneficiary ?? ""],
+    ["Platform", e.platform],
   ].filter(([, v]) => v);
   return (
     <Card>
@@ -203,7 +206,7 @@ function OriginalMessage({ report }: { report: Report }) {
 export function ReportView({ report, runId, onReplay }: { report: Report; runId: string; onReplay?: () => void }) {
   const t = report.telemetry;
   const link = typeof window === "undefined" ? "" : `${window.location.origin}/investigations?id=${encodeURIComponent(runId)}`;
-  const slug = (report.entities.company || "offer").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  const slug = (report.entities.supplier_name || "supplier").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
   return (
     <div className="space-y-6">
@@ -249,6 +252,7 @@ export function ReportView({ report, runId, onReplay }: { report: Report; runId:
             <AskReport runId={runId} decision={report.judgement.decision} />
           </div>
           <SafeReply report={report} />
+          <TrailPanel leads={report.leads ?? []} signals={report.signals} stopReason={report.stop_reason} />
           <SignalList signals={report.signals} sorted />
           <ClaimBoard claims={report.claims} />
           <Assessment report={report} />
@@ -259,7 +263,6 @@ export function ReportView({ report, runId, onReplay }: { report: Report; runId:
         </Reveal>
         <Reveal as="div" className="min-w-0 space-y-6 lg:col-span-4" selector=":scope > *" stagger={0.1} y={28} delay={0.15}>
           <RoutingPanel calls={t.calls} tavily={{ calls: t.tavily.calls, credits: t.tavily.credits, byKind: t.tavily.by_kind }} />
-          <LinksPanel links={report.links ?? []} />
           <SourceList sources={report.sources} />
         </Reveal>
       </div>

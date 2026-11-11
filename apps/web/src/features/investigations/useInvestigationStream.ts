@@ -7,6 +7,7 @@ import type {
   Claim,
   Entities,
   Judgement,
+  Lead,
   LinkCheck,
   LlmCall,
   Report,
@@ -38,13 +39,15 @@ export interface LiveState {
   judgement: Judgement | null;
   challenge: Challenge | null;
   links: LinkCheck[];
+  leads: Lead[];
+  round: number;
   report: Report | null;
   error: string | null;
   elapsed: number;
   disconnected: boolean;
 }
 
-const STAGE_KEYS: StageKey[] = ["intake", "research", "forensics", "verify", "judge", "challenge", "brief"];
+const STAGE_KEYS: StageKey[] = ["intake", "investigate", "judge", "challenge", "brief"];
 
 function initialState(): LiveState {
   return {
@@ -62,6 +65,8 @@ function initialState(): LiveState {
     judgement: null,
     challenge: null,
     links: [],
+    leads: [],
+    round: 0,
     report: null,
     error: null,
     elapsed: 0,
@@ -108,6 +113,13 @@ function apply(state: LiveState, event: RunEvent): LiveState {
         entities: event.entities,
         claims: event.claims.map((c) => ({ ...c, status: "pending" as const })),
       };
+    case "lead": {
+      const exists = state.leads.some((l) => l.id === event.lead.id);
+      const leads = exists ? state.leads.map((l) => (l.id === event.lead.id ? event.lead : l)) : [...state.leads, event.lead];
+      return { ...next, leads };
+    }
+    case "round":
+      return { ...next, round: event.round };
     case "official":
       return { ...next, official: event.domain };
     case "claim": {

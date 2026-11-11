@@ -12,36 +12,24 @@ export interface StageMeta {
 export const STAGES: StageMeta[] = [
   {
     key: "intake",
-    title: "Read the offer",
+    title: "Read the paperwork",
     engine: "Nano + rules",
     tier: "nano",
-    detail: "Pulls out who is offering what, the pay, and every claim that can be checked. Rules in code flag payment and pressure patterns.",
+    detail: "Pulls out who the supplier says it is: name, address, registration number, certificates, photos and who gets paid. Rules in code flag risky payment terms. Each statement becomes a claim to check.",
   },
   {
-    key: "research",
-    title: "Investigate the web",
-    engine: "Tavily",
-    detail: "Finds the official site, crawls its careers pages, and searches for fraud warnings and reused copies of the same script.",
-  },
-  {
-    key: "forensics",
-    title: "Domain forensics",
-    engine: "RDAP + Tavily Extract",
-    detail: "Reads the registry record for every domain in the message, opens each link through Tavily to see what the page asks for, and compares the sender with the company's real website.",
-  },
-  {
-    key: "verify",
-    title: "Check every claim",
-    engine: "Nano → Super",
-    tier: "super",
-    detail: "Nano checks each claim against the sources. Anything it's unsure about goes to Super with a fresh search.",
+    key: "investigate",
+    title: "Follow the evidence",
+    engine: "Registries · customs · maps · Tavily",
+    tier: "nano",
+    detail: "Runs lookups in rounds: company registries, customs and trade logs, certificate directories, the map, reverse-image search. When two sources disagree, code opens a follow-up on a third, until the chain of evidence is complete.",
   },
   {
     key: "judge",
     title: "Weigh the evidence",
     engine: "Nemotron Ultra",
     tier: "ultra",
-    detail: "One long reasoning pass over every signal, claim and source, ending in a decision with citations.",
+    detail: "One long reasoning pass over every finding, claim and lookup, ending in a decision with citations back to the chain of evidence.",
   },
   {
     key: "challenge",
@@ -55,6 +43,6 @@ export const STAGES: StageMeta[] = [
     title: "Write the brief",
     engine: "Nemotron Nano",
     tier: "nano",
-    detail: "A plain-language summary and a polite reply that asks the sender to prove who they are.",
+    detail: "A plain-language summary and a polite message that asks the supplier to prove who they are before any deposit.",
   },
 ];

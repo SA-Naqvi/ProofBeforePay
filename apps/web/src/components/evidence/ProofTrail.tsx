@@ -310,7 +310,7 @@ function DetailBody({ report, node }: { report: Report; node: TrailNode }) {
     return (
       <div className="space-y-1.5">
         <p className="flex flex-wrap items-center gap-2 font-medium text-bone-50">
-          {c.text} {c.checked_by && <TierBadge tier={c.checked_by} />}
+          {c.text} {c.checked_by && c.checked_by !== "code" && <TierBadge tier={c.checked_by} />}
         </p>
         {c.note && <p className="text-bone-400">{c.note}</p>}
         {c.quote && (

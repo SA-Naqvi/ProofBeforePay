@@ -1,3 +1,5 @@
+> **Out of date.** This script narrates the original job-offer version of the app (a Telegram job sample, Amazon's careers page, cost figures measured on the old seven-step pipeline). Re-record it against the supplier pipeline and re-measure the cost figures before use.
+
 # Demo video script (under 3 minutes)
 
 Record at 1440×900, browser zoom 100%, dark room lighting off the screen. Have the live site open with the Telegram job sample ready, and the Canonical example open in a second tab. Say it in your own words; the lines below are a guide, not a script to read.
