@@ -9,12 +9,15 @@ import asyncio
 import logging
 from typing import Any
 
+import httpx
 from paypalserversdk.configuration import Environment
 from paypalserversdk.exceptions.api_exception import ApiException
 from paypalserversdk.http.auth.o_auth_2 import ClientCredentialsAuthCredentials
 from paypalserversdk.models.amount_with_breakdown import AmountWithBreakdown
 from paypalserversdk.models.checkout_payment_intent import CheckoutPaymentIntent
 from paypalserversdk.models.order_request import OrderRequest
+from paypalserversdk.models.order_tracker_request import OrderTrackerRequest
+from paypalserversdk.models.payee_base import PayeeBase
 from paypalserversdk.models.payment_source import PaymentSource
 from paypalserversdk.models.paypal_wallet import PaypalWallet
 from paypalserversdk.models.paypal_wallet_experience_context import PaypalWalletExperienceContext
@@ -24,6 +27,10 @@ from paypalserversdk.paypal_serversdk_client import PaypalServersdkClient
 from ..core.config import CreditPack, Settings
 
 logger = logging.getLogger("proofbeforepay.paypal")
+
+
+#: Carriers PayPal knows by code. Anything else is sent as OTHER with its name.
+KNOWN_CARRIERS = frozenset({"DHL", "DHL_API", "FEDEX", "UPS", "USPS", "TNT", "ARAMEX", "EMS_CN", "YUNEXPRESS", "CAINIAO", "INDIA_POST", "BLUEDART"})
 
 
 class PaymentError(RuntimeError):
@@ -99,6 +106,165 @@ class PayPalGateway:
             "custom_id": (unit.custom_id if unit else "") or "",
             "payer_email": (order.payer.email_address if order.payer else "") or "",
         }
+
+    # ── deposits to a supplier ──────────────────────────────────────────────
+    async def create_deposit_order(
+        self,
+        *,
+        hold: bool,
+        amount: str,
+        currency: str,
+        reference: str,
+        description: str,
+        invoice_id: str,
+        payee_email: str | None,
+        return_url: str,
+        cancel_url: str,
+    ) -> dict[str, str]:
+        """A deposit for a supplier. `hold=False` pays now (intent CAPTURE); `hold=True` only reserves the buyer's funds
+        (intent AUTHORIZE) until the buyer releases or cancels it. With `payee_email`, the money goes to the supplier's
+        own PayPal account instead of this platform's."""
+        body = OrderRequest(
+            intent=CheckoutPaymentIntent.AUTHORIZE if hold else CheckoutPaymentIntent.CAPTURE,
+            purchase_units=[
+                PurchaseUnitRequest(
+                    reference_id="deposit",
+                    custom_id=reference,
+                    invoice_id=invoice_id,
+                    description=description[:127],
+                    amount=AmountWithBreakdown(currency_code=currency, value=amount),
+                    payee=PayeeBase(email_address=payee_email) if payee_email else None,
+                )
+            ],
+            payment_source=PaymentSource(
+                paypal=PaypalWallet(
+                    experience_context=PaypalWalletExperienceContext(
+                        brand_name="ProofBeforePay",
+                        shipping_preference="NO_SHIPPING",
+                        user_action="CONTINUE" if hold else "PAY_NOW",
+                        return_url=return_url,
+                        cancel_url=cancel_url,
+                    )
+                )
+            ),
+        )
+        response = await self._call(self.orders.create_order, {"body": body, "prefer": "return=representation", "paypal_request_id": reference})
+        order = response.body
+        links = {_value(link.rel): link.href for link in (order.links or [])}
+        approve = links.get("payer-action") or links.get("approve")
+        if not order.id or not approve:
+            raise PaymentError("PayPal didn't return a checkout link. Please try again.")
+        return {"id": order.id, "approve_url": approve, "status": _value(order.status)}
+
+    async def authorize_order(self, order_id: str, *, request_id: str) -> dict[str, str]:
+        """Turn an approved AUTHORIZE order into a hold on the buyer's funds. Nothing moves until it's captured."""
+        response = await self._call(self.orders.authorize_order, {"id": order_id, "prefer": "return=representation", "paypal_request_id": request_id})
+        order = response.body
+        unit = (order.purchase_units or [None])[0]
+        auths = ((unit.payments.authorizations if unit and unit.payments else None) or [])
+        auth = auths[0] if auths else None
+        return {
+            "order_status": _value(order.status),
+            "authorization_id": (auth.id if auth else "") or "",
+            "authorization_status": _value(auth.status) if auth else "",
+            "expires_at": (auth.expiration_time if auth else "") or "",
+            "amount": (auth.amount.value if auth and auth.amount else "") or "",
+            "currency": (auth.amount.currency_code if auth and auth.amount else "") or "",
+            "custom_id": (unit.custom_id if unit else "") or "",
+            "payer_email": (order.payer.email_address if order.payer else "") or "",
+        }
+
+    async def capture_authorization(self, authorization_id: str, *, request_id: str) -> dict[str, str]:
+        """Release a hold: capture the whole authorized amount for the payee."""
+        response = await self._call(
+            self.client.payments.capture_authorized_payment,
+            {"authorization_id": authorization_id, "prefer": "return=representation", "paypal_request_id": request_id},
+        )
+        capture = response.body
+        return {
+            "capture_id": capture.id or "",
+            "capture_status": _value(capture.status),
+            "amount": (capture.amount.value if capture.amount else "") or "",
+            "currency": (capture.amount.currency_code if capture.amount else "") or "",
+        }
+
+    async def void_authorization(self, authorization_id: str, *, request_id: str) -> None:
+        """Cancel a hold. The buyer's funds are released back to them; the supplier never receives anything."""
+        await self._call(self.client.payments.void_payment, {"authorization_id": authorization_id, "paypal_request_id": request_id})
+
+    async def order_status(self, order_id: str) -> dict[str, str]:
+        """Read an order back, for settling payments that were still pending when the buyer returned."""
+        response = await self._call(self.orders.get_order, {"id": order_id})
+        order = response.body
+        unit = (order.purchase_units or [None])[0]
+        captures = ((unit.payments.captures if unit and unit.payments else None) or [])
+        capture = captures[0] if captures else None
+        return {
+            "order_status": _value(order.status),
+            "capture_status": _value(capture.status) if capture else "",
+            "capture_id": (capture.id if capture else "") or "",
+            "amount": (capture.amount.value if capture and capture.amount else "") or "",
+            "currency": (capture.amount.currency_code if capture and capture.amount else "") or "",
+            "custom_id": (unit.custom_id if unit else "") or "",
+        }
+
+    async def add_tracking(self, order_id: str, *, capture_id: str, tracking_number: str, carrier: str) -> str:
+        """Attach the supplier's shipment tracking to the PayPal transaction, which strengthens a later
+        Item Not Received claim under PayPal Purchase Protection."""
+        known = carrier.upper().replace(" ", "_") in KNOWN_CARRIERS
+        body = OrderTrackerRequest(
+            capture_id=capture_id,
+            tracking_number=tracking_number,
+            carrier=carrier.upper().replace(" ", "_") if known else "OTHER",
+            carrier_name_other=None if known else carrier[:64],
+            notify_payer=False,
+        )
+        response = await self._call(self.orders.create_order_tracking, {"id": order_id, "body": body})
+        return _value(getattr(response.body, "status", "")) or "ADDED"
+
+    # ── webhooks ─────────────────────────────────────────────────────────────
+    @property
+    def api_base(self) -> str:
+        return "https://api-m.paypal.com" if self.settings.paypal_env == "live" else "https://api-m.sandbox.paypal.com"
+
+    async def verify_webhook(self, headers: dict[str, str], event: dict[str, Any]) -> bool:
+        """Ask PayPal whether this webhook delivery is genuine (signature, certificate and our webhook id)."""
+        webhook_id = self.settings.paypal_webhook_id
+        needed = ("paypal-auth-algo", "paypal-cert-url", "paypal-transmission-id", "paypal-transmission-sig", "paypal-transmission-time")
+        if not webhook_id or not all(headers.get(h) for h in needed):
+            return False
+        try:
+            async with httpx.AsyncClient(base_url=self.api_base, timeout=15) as http:
+                token = await http.post(
+                    "/v1/oauth2/token",
+                    data={"grant_type": "client_credentials"},
+                    auth=(self.settings.paypal_client_id, self.settings.paypal_client_secret),
+                )
+                token.raise_for_status()
+                result = await http.post(
+                    "/v1/notifications/verify-webhook-signature",
+                    headers={"Authorization": f"Bearer {token.json()['access_token']}"},
+                    json={
+                        "auth_algo": headers["paypal-auth-algo"],
+                        "cert_url": headers["paypal-cert-url"],
+                        "transmission_id": headers["paypal-transmission-id"],
+                        "transmission_sig": headers["paypal-transmission-sig"],
+                        "transmission_time": headers["paypal-transmission-time"],
+                        "webhook_id": webhook_id,
+                        "webhook_event": event,
+                    },
+                )
+                result.raise_for_status()
+                return result.json().get("verification_status") == "SUCCESS"
+        except (httpx.HTTPError, KeyError, ValueError) as exc:
+            logger.warning("Couldn't verify a PayPal webhook: %s", exc)
+            return False
+
+    @property
+    def client(self) -> PaypalServersdkClient:
+        self.orders  # builds the client on first use
+        assert self._client is not None
+        return self._client
 
     async def _call(self, fn: Any, options: dict[str, Any]) -> Any:
         try:

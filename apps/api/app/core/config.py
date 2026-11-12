@@ -155,6 +155,15 @@ class Settings:
     credit_packs: tuple[CreditPack, ...] = ()
     credits_per_check: int = 1
     starting_credits: int = 0
+    # Verdict-gated deposits: the most a single deposit may be (a guard for the demo, not a PayPal limit), the
+    # webhook id PayPal signs deliveries for (Developer Dashboard → your app → Webhooks), and a sandbox "supplier"
+    # account the deposit form suggests so judges can pay a real sandbox payee.
+    max_deposit: float = 10000.0
+    paypal_webhook_id: str = ""
+    demo_supplier_paypal_email: str = ""
+    # Shown on the payment pages so judges can approve sandbox payments. Sandbox-only test credentials.
+    sandbox_buyer_email: str = ""
+    sandbox_buyer_password: str = ""
 
     @property
     def payments_enabled(self) -> bool:
@@ -257,6 +266,12 @@ def load_settings() -> Settings:
         credit_packs=_packs(_env("CREDIT_PACKS", DEFAULT_PACKS)),
         credits_per_check=max(1, _int("CREDITS_PER_CHECK", 1)),
         starting_credits=max(0, _int("STARTING_CREDITS", 0)),
+        max_deposit=max(1.0, _float("MAX_DEPOSIT", 10000.0)),
+        paypal_webhook_id=_env("PAYPAL_WEBHOOK_ID"),
+        demo_supplier_paypal_email=_env("DEMO_SUPPLIER_PAYPAL_EMAIL").lower(),
+        # Never shown when PAYPAL_ENV=live, whatever is set here.
+        sandbox_buyer_email=_env("PAYPAL_SANDBOX_BUYER_EMAIL"),
+        sandbox_buyer_password=_env("PAYPAL_SANDBOX_BUYER_PASSWORD"),
     )
 
 

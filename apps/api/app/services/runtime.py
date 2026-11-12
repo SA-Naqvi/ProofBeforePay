@@ -11,6 +11,7 @@ from ..db.base import Database
 from ..db.session import connect
 from ..llm.nebius_client import LLMRouter
 from ..repositories.billing_repo import BillingRepo
+from ..repositories.deposit_repo import DepositRepo
 from ..repositories.feedback_repo import FeedbackRepo
 from ..repositories.investigation_repo import InvestigationRepo
 from ..repositories.run_store import RunStore
@@ -21,6 +22,7 @@ from .admin_service import AdminService
 from .assistant_service import AssistantService
 from .auth_service import AuthService
 from .billing_service import BillingService
+from .deposit_service import DepositService
 from .email_service import EmailService
 from .investigation_service import InvestigationService
 from .paypal_gateway import PayPalGateway
@@ -38,6 +40,8 @@ def _limits() -> dict[str, SlidingWindow]:
         "ask": SlidingWindow(30, 3600),
         "transcribe": SlidingWindow(10, 3600),
         "billing": SlidingWindow(20, 3600),
+        "deposit": SlidingWindow(40, 3600),
+        "review": SlidingWindow(15, 3600),
     }
 
 
@@ -57,6 +61,7 @@ class Runtime:
     admin: AdminService
     assistant: AssistantService
     billing: BillingService
+    deposits: DepositService
     limits: dict[str, SlidingWindow] = field(default_factory=_limits)
 
 
@@ -81,9 +86,13 @@ def build(
         llm, web, config.max_claims, tools=ToolBox(web, config),
         limits={"rounds": config.max_rounds, "leads": config.max_leads, "depth": config.max_depth},
     )
-    billing = BillingService(config, BillingRepo(db), gateway or PayPalGateway(config))
+    gateway = gateway or PayPalGateway(config)
+    billing = BillingService(config, BillingRepo(db), gateway)
     investigations = InvestigationService(
         config, pipeline, store, runs, budget, RateLimiter(config.runs_per_ip_per_hour, config.max_runs_per_day), billing
+    )
+    deposits = DepositService(
+        config, DepositRepo(db), gateway, llm, budget, runs, investigations.find, db, on_credit_capture=billing.settle_from_paypal
     )
     return Runtime(
         settings=config,
@@ -100,6 +109,7 @@ def build(
         admin=AdminService(config, llm, db, runs, users, feedback, email, budget, store),
         assistant=AssistantService(config, llm, budget, runs, store),
         billing=billing,
+        deposits=deposits,
     )
 
 

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { BillingPage } from "@/features/billing/BillingPage";
 
-export const metadata: Metadata = { title: "Credits · ProofBeforePay" };
+export const metadata: Metadata = { title: "Payments · ProofBeforePay" };
 
 export default function Page() {
   return <BillingPage />;

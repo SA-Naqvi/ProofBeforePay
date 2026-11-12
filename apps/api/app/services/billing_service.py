@@ -66,6 +66,7 @@ class BillingService:
         }
         if user is not None:
             await self._grant_starting(user)
+            await self._refresh_pending(user)
             out |= {
                 "balance": await self.repo.balance(user.id),
                 "exempt": self.exempt(user),
@@ -121,6 +122,36 @@ class BillingService:
             await self.repo.add(user.id, order["credits"], f"{order['credits']} credits ({order['pack_id']} pack)", f"paypal:{order['id']}")
             await self.repo.update_order(order["id"], status="completed", capture_id=paid["capture_id"], completed_at=now())
             return await self._result(user, order, "completed")
+
+    async def settle_from_paypal(self, paypal_order_id: str, facts: dict[str, str]) -> bool:
+        """Finish a purchase that was still pending when the buyer came back: called by the PayPal webhook
+        (PAYMENT.CAPTURE.COMPLETED) or when the buyer reopens the billing page. Grants credits at most once."""
+        order = await self.repo.order_by_paypal_id(paypal_order_id)
+        if order is None or order["status"] not in ("pending", "created"):
+            return False
+        async with self._locks[order["user_id"] or ""]:
+            order = await self.repo.order_by_paypal_id(paypal_order_id)
+            if order is None or order["status"] not in ("pending", "created"):
+                return False
+            problem = self._verify(order, {"order_status": "COMPLETED", **facts})
+            if problem or facts.get("capture_status") != "COMPLETED":
+                logger.warning("Didn't settle PayPal order %s: %s", paypal_order_id, problem or facts.get("capture_status"))
+                return False
+            await self.repo.add(order["user_id"], order["credits"], f"{order['credits']} credits ({order['pack_id']} pack)", f"paypal:{order['id']}")
+            await self.repo.update_order(order["id"], status="completed", capture_id=facts.get("capture_id") or None, completed_at=now())
+            return True
+
+    async def _refresh_pending(self, user: User) -> None:
+        if not self.enabled:
+            return
+        for order in await self.repo.pending_orders(user.id):
+            try:
+                facts = await self.gateway.order_status(order["paypal_order_id"])
+            except Exception as exc:  # the billing page must load even if PayPal can't be reached
+                logger.info("Couldn't refresh pending PayPal order %s: %s", order["paypal_order_id"], exc)
+                continue
+            if facts["capture_status"] == "COMPLETED":
+                await self.settle_from_paypal(order["paypal_order_id"], facts)
 
     @staticmethod
     def _verify(order: dict[str, Any], paid: dict[str, str]) -> str | None:

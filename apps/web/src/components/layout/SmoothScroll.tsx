@@ -14,11 +14,11 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (prefersReducedMotion()) return;
-    const lenis = new Lenis({ lerp: 0.085, wheelMultiplier: 0.95, touchMultiplier: 1.4, allowNestedScroll: true });
+    const lenis = new Lenis({ lerp: 0.12, wheelMultiplier: 0.9, touchMultiplier: 1.4, allowNestedScroll: true });
     lenis.on("scroll", ScrollTrigger.update);
     const tick = (time: number) => lenis.raf(time * 1000);
     gsap.ticker.add(tick);
-    gsap.ticker.lagSmoothing(0);
+    gsap.ticker.lagSmoothing(500, 33);
     setLenis(lenis);
 
     // Hold the page still while the home page's preloader is up (other pages have no intro).

@@ -51,5 +51,8 @@ class BillingRepo:
         rows = await self.orders.select(where={"paypal_order_id": paypal_order_id}, limit=1)
         return rows[0] if rows else None
 
+    async def pending_orders(self, user_id: str) -> list[dict[str, Any]]:
+        return await self.orders.select(where={"user_id": user_id, "status": "pending"}, limit=10)
+
     async def update_order(self, order_id: str, **values: Any) -> None:
         await self.orders.update({"id": order_id}, values)

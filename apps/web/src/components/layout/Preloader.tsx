@@ -102,7 +102,7 @@ export function Preloader() {
             </span>
           </div>
           <div data-pl-out className="mt-6 h-px w-full bg-white/[0.08]">
-            <div ref={bar} className="h-px origin-left scale-x-0 bg-brand-400 shadow-[0_0_12px_rgba(155,212,36,0.8)]" />
+            <div ref={bar} className="h-px origin-left scale-x-0 bg-brand-400 shadow-[0_0_12px_rgba(56,189,248,0.8)]" />
           </div>
         </div>
       </div>

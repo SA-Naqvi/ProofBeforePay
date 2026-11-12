@@ -39,16 +39,14 @@ export function Reveal({
         const targets = selector ? el.querySelectorAll(selector) : el;
         gsap.fromTo(
           targets,
-          { autoAlpha: 0, y, filter: "blur(10px)" },
+          { autoAlpha: 0, y },
           {
             autoAlpha: 1,
             y: 0,
-            filter: "blur(0px)",
             duration: 1.2,
             ease: "expo.out",
             delay,
             stagger,
-            clearProps: "filter,transform",
             scrollTrigger: { trigger: el, start, once: true },
           },
         );

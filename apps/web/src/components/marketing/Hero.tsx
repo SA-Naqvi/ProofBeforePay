@@ -23,7 +23,7 @@ export function Hero() {
           .from("[data-hero-field]", { autoAlpha: 0, duration: 2.4, ease: "power2.out" }, 0)
           .from("[data-hero-eyebrow]", { autoAlpha: 0, y: 18, duration: 1 }, 0.05)
           .from("[data-hero-scene]", { autoAlpha: 0, y: 60, rotationX: 22, scale: 0.9, transformPerspective: 1200, duration: 1.8 }, 0.15)
-          .from("[data-hero-copy]", { autoAlpha: 0, y: 26, filter: "blur(10px)", duration: 1.2, stagger: 0.09, clearProps: "filter" }, 0.5)
+          .from("[data-hero-copy]", { autoAlpha: 0, y: 26, duration: 1.2, stagger: 0.09 }, 0.5)
           .from("[data-hero-cue]", { autoAlpha: 0, duration: 1 }, 1.2);
         const stop = onIntroDone(() => intro.play());
 
@@ -57,7 +57,7 @@ export function Hero() {
                 <span className="absolute inline-flex size-full animate-ping rounded-full bg-brand-400 opacity-75" />
                 <span className="relative inline-flex size-1.5 rounded-full bg-brand-400" />
               </span>
-              NVIDIA Nemotron on Nebius Token Factory
+              Nemotron AI checks · PayPal-gated deposits
             </span>
           </div>
 
@@ -80,7 +80,7 @@ export function Hero() {
               <SectionLink
                 hash="#try"
                 onPointerEnter={trackFillOrigin}
-                className="btn roll-host inline-flex h-13 items-center gap-2.5 rounded-2xl bg-brand-500 px-6 text-[15px] font-semibold text-ink-950 shadow-[0_0_0_1px_rgba(118,185,0,0.5),0_18px_40px_-14px_rgba(118,185,0,0.75)] [--btn-fill:var(--color-bone-50)]"
+                className="btn roll-host inline-flex h-13 items-center gap-2.5 rounded-2xl bg-brand-500 px-6 text-[15px] font-semibold text-ink-950 shadow-[0_0_0_1px_rgba(14,165,233,0.5),0_18px_40px_-14px_rgba(14,165,233,0.75)] [--btn-fill:var(--color-bone-50)]"
               >
                 <span data-magnetic-inner className="inline-flex items-center gap-2.5">
                   <RollText text="Check a supplier" />

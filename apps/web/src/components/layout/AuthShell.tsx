@@ -69,7 +69,7 @@ export function AuthShell({ children }: { children: ReactNode }) {
         <div className="bg-grid mask-radial pointer-events-none absolute inset-0 opacity-70" aria-hidden />
         <div
           className="pointer-events-none absolute inset-0"
-          style={{ background: "radial-gradient(600px circle at 50% 45%, rgb(118 185 0 / 0.16), transparent 60%)" }}
+          style={{ background: "radial-gradient(600px circle at 50% 45%, rgb(14 165 233 / 0.16), transparent 60%)" }}
           aria-hidden
         />
         <div data-auth-depth className="absolute inset-0">
@@ -78,7 +78,7 @@ export function AuthShell({ children }: { children: ReactNode }) {
               <circle cx="100" cy="100" r="96" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="2 7" />
               <circle cx="100" cy="100" r="78" fill="none" stroke="currentColor" strokeOpacity="0.5" strokeWidth="1" />
             </svg>
-            <div className="grid size-28 place-items-center rounded-full border border-brand-500/30 bg-ink-950/80 shadow-[0_0_80px_-10px_rgba(118,185,0,0.55)] backdrop-blur">
+            <div className="grid size-28 place-items-center rounded-full border border-brand-500/30 bg-ink-950/80 shadow-[0_0_80px_-10px_rgba(14,165,233,0.55)] backdrop-blur">
               <LogoMark className="size-14 text-bone-200" />
             </div>
           </div>
@@ -87,7 +87,7 @@ export function AuthShell({ children }: { children: ReactNode }) {
           <div
             key={label}
             data-auth-chip
-            className={`absolute ${pos} flex items-center gap-2 rounded-full border px-3.5 py-2 text-[13px] font-medium shadow-[0_18px_40px_-20px_rgba(0,0,0,0.9)] backdrop-blur ${tone}`}
+            className={`absolute ${pos} flex items-center gap-2 rounded-full border px-3.5 py-2 text-[13px] font-medium shadow-[0_18px_40px_-20px_rgba(16,72,130,0.28)] backdrop-blur ${tone}`}
           >
             <Icon className="size-4" aria-hidden />
             {label}

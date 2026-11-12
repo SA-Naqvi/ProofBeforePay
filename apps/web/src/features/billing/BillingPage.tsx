@@ -1,7 +1,8 @@
 "use client";
 
-import { CircleCheck, Clock3, Coins, ExternalLink, ShieldCheck, TriangleAlert } from "lucide-react";
+import { CircleCheck, Clock3, Coins, ExternalLink, Landmark, ShieldCheck, TriangleAlert } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { DepositList } from "@/components/payments/PaymentGate";
 import { Button, Card, CardHeader, cx, Spinner } from "@/components/ui";
 import { PageHeader } from "@/components/ui/page";
 import { useApi } from "@/hooks/useApi";
@@ -89,9 +90,24 @@ export function BillingPage() {
 
   return (
     <div className="max-w-5xl">
-      <PageHeader eyebrow="Credits" title="Pay as you go">
-        Each supplier check uses {data?.cost_per_check ?? 1} credit. Buy a pack with PayPal; credits never expire.
+      <PageHeader eyebrow="Payments" title="PayPal, end to end">
+        Supplier deposits you paid or held through PayPal, gated by each report&apos;s verdict, and the credits that pay for checks.
       </PageHeader>
+
+      <section className="mb-10">
+        <div className="mb-3 flex items-center gap-2">
+          <Landmark className="size-4 text-brand-300" aria-hidden />
+          <h2 className="text-sm font-semibold text-bone-50">Supplier deposits</h2>
+          <span className="text-xs text-bone-500">Proceed pays now · Verify first holds until the proof clears · Stop blocks</span>
+        </div>
+        <DepositList />
+      </section>
+
+      <div className="mb-3 flex items-center gap-2">
+        <Coins className="size-4 text-brand-300" aria-hidden />
+        <h2 className="text-sm font-semibold text-bone-50">Check credits</h2>
+        <span className="text-xs text-bone-500">Each check uses {data?.cost_per_check ?? 1} credit; credits never expire</span>
+      </div>
 
       {sandbox && data?.enabled && (
         <div className="mb-6 flex items-start gap-3 rounded-2xl border border-caution-400/25 bg-caution-400/[0.06] px-4 py-3 text-sm text-caution-200">
@@ -144,10 +160,14 @@ export function BillingPage() {
                 </p>
               </div>
             </div>
-            {data.exempt && <p className="max-w-xs text-sm text-bone-400">Administrator and demo accounts run checks without spending credits.</p>}
+            {data.exempt && (
+              <p className="max-w-xs text-sm text-bone-400">
+                Administrator and demo accounts run checks for free. You can still try a sandbox purchase below.
+              </p>
+            )}
           </Card>
 
-          {!data.exempt && (
+          {data.packs.length > 0 && (
             <div className="grid gap-4 md:grid-cols-3">
               {data.packs.map((pack) => (
                 <PackCard key={pack.id} pack={pack} cost={data.cost_per_check} busy={buying === pack.id} disabled={buying !== null || finishing} onBuy={() => void buy(pack)} />

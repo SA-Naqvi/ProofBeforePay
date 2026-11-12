@@ -154,12 +154,12 @@ export function AgentPipeline({ state, title = "Agent pipeline", running }: { st
       <div className="relative px-3 pt-6 pb-4 sm:px-5">
         <div className="absolute top-[52px] right-[calc(100%/14+12px)] left-[calc(100%/14+12px)] hidden h-[2px] rounded-full bg-white/[0.06] md:block" aria-hidden>
           <motion.div
-            className="h-full origin-left rounded-full bg-gradient-to-r from-brand-600 via-brand-400 to-brand-300 shadow-[0_0_14px_rgba(155,212,36,0.7)]"
+            className="h-full origin-left rounded-full bg-gradient-to-r from-brand-600 via-brand-400 to-brand-300 shadow-[0_0_14px_rgba(56,189,248,0.7)]"
             initial={false}
             animate={{ scaleX: Math.min(progress, 1) }}
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           />
-          {running && <span className="pipeline-pulse absolute top-1/2 size-2 -translate-y-1/2 rounded-full bg-brand-200 shadow-[0_0_14px_4px_rgba(155,212,36,0.6)]" style={{ left: `${progress * 100}%` }} />}
+          {running && <span className="pipeline-pulse absolute top-1/2 size-2 -translate-y-1/2 rounded-full bg-brand-200 shadow-[0_0_14px_4px_rgba(56,189,248,0.6)]" style={{ left: `${progress * 100}%` }} />}
         </div>
         <ol className="relative grid grid-cols-1 gap-2 md:grid-cols-5 md:gap-1">
           {STAGES.map((stage, i) => {
@@ -184,7 +184,7 @@ export function AgentPipeline({ state, title = "Agent pipeline", running }: { st
                       transition={st === "active" ? { duration: 1.6, repeat: Infinity, ease: "easeInOut" } : { duration: 0.3 }}
                       className={cx(
                         "grid size-12 place-items-center rounded-full border transition-colors duration-500",
-                        st === "done" && "border-brand-400/70 bg-brand-500 text-ink-950 shadow-[0_0_24px_-4px_rgba(118,185,0,0.7)]",
+                        st === "done" && "border-brand-400/70 bg-brand-500 text-ink-950 shadow-[0_0_24px_-4px_rgba(14,165,233,0.7)]",
                         st === "active" && "border-brand-500/60 bg-brand-500/15 text-brand-200",
                         st === "error" && "border-stop-500/50 bg-stop-500/15 text-stop-300",
                         st === "pending" && "border-white/[0.09] bg-ink-900 text-bone-600",

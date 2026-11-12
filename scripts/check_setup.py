@@ -85,16 +85,28 @@ async def check_database() -> bool:
         print("[skip] Supabase isn't configured; runs are saved as JSON in backend/data/runs")
         return True
     db = SupabaseDatabase(settings.supabase_url, settings.supabase_secret_key)
+    deposits_ready = True
     try:
         accounts = await db.ping()
         spent = await InvestigationRepo(db).spent()
+        try:
+            await db.table("deposits").select(columns="id", limit=1)
+            await db.table("paypal_events").select(columns="id", limit=1)
+        except Exception:
+            deposits_ready = False
+    except Exception as exc:
+        print(f"[FAIL] Supabase isn't reachable ({exc}). Check SUPABASE_URL: the project may be paused or deleted.")
+        return False
     finally:
         await db.close()
     if spent is None or not accounts:
-        print("[FAIL] Supabase: the tables aren't there yet. Run apps/api/migrations/0001_init.sql and then "
-              "0002_accounts.sql and 0003_credits.sql in the Supabase SQL Editor, and check SUPABASE_URL and SUPABASE_SECRET_KEY.")
+        print("[FAIL] Supabase: the tables aren't there yet. Run apps/api/migrations/0001_init.sql, 0002_accounts.sql, "
+              "0003_credits.sql and 0004_deposits.sql in the Supabase SQL Editor, and check SUPABASE_URL and SUPABASE_SECRET_KEY.")
         return False
-    print(f"[ OK ] Supabase connected; accounts ready; model spend recorded so far ${spent:.4f}")
+    if not deposits_ready:
+        print("[FAIL] Supabase: the deposits tables are missing. Run apps/api/migrations/0004_deposits.sql in the SQL Editor.")
+        return False
+    print(f"[ OK ] Supabase connected; accounts and deposits ready; model spend recorded so far ${spent:.4f}")
     return True
 
 

@@ -28,6 +28,7 @@ import { SourceList } from "@/components/evidence/Feeds";
 import { RoutingPanel } from "@/components/investigation/RoutingPanel";
 import { AgentTrace } from "@/components/reports/AgentTrace";
 import { AskReport } from "@/components/reports/AskReport";
+import { PaymentGate } from "@/components/payments/PaymentGate";
 import { FeedbackWidget } from "@/components/reports/FeedbackWidget";
 import { Button, Card, CardHeader, CopyButton, cx, POLARITY_STYLE, RefText, SectionLabel } from "@/components/ui";
 
@@ -211,6 +212,10 @@ export function ReportView({ report, runId, onReplay }: { report: Report; runId:
   return (
     <div className="space-y-6">
       <DecisionHero report={report} />
+
+      <div data-print-hide>
+        <PaymentGate runId={runId} decision={report.judgement.decision} />
+      </div>
 
       <div data-print-hide className="flex flex-wrap items-center gap-2">
         <CopyButton text={link} label="Copy link" className="py-2" />

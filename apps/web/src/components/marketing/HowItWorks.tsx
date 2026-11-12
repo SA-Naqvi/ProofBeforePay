@@ -77,9 +77,9 @@ export function HowItWorks() {
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={stage.key}
-                    initial={{ opacity: 0, rotateX: -14, y: 40, filter: "blur(10px)" }}
-                    animate={{ opacity: 1, rotateX: 0, y: 0, filter: "blur(0px)" }}
-                    exit={{ opacity: 0, rotateX: 12, y: -30, filter: "blur(8px)" }}
+                    initial={{ opacity: 0, rotateX: -14, y: 40 }}
+                    animate={{ opacity: 1, rotateX: 0, y: 0 }}
+                    exit={{ opacity: 0, rotateX: 12, y: -30 }}
                     transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
                     style={{ transformOrigin: "50% 100%" }}
                   >
@@ -102,7 +102,7 @@ export function HowItWorks() {
             <span className="absolute top-3 bottom-3 left-[17px] w-px bg-white/[0.07]" aria-hidden>
               <span
                 data-beam-fill
-                className="block h-full w-full origin-top bg-gradient-to-b from-brand-300 via-brand-500 to-brand-600 shadow-[0_0_12px_rgba(155,212,36,0.7)]"
+                className="block h-full w-full origin-top bg-gradient-to-b from-brand-300 via-brand-500 to-brand-600 shadow-[0_0_12px_rgba(56,189,248,0.7)]"
               />
             </span>
             {STAGES.map((s, i) => (
@@ -110,7 +110,7 @@ export function HowItWorks() {
                 <span
                   className={cx(
                     "absolute top-1/2 left-0 grid size-9 -translate-y-1/2 place-items-center rounded-full border font-mono text-[11px] transition-all duration-500 max-lg:top-14",
-                    i <= active ? "border-brand-400 bg-brand-500 text-ink-950 shadow-[0_0_24px_rgba(118,185,0,0.5)]" : "border-white/[0.1] bg-ink-900 text-bone-500",
+                    i <= active ? "border-brand-400 bg-brand-500 text-ink-950 shadow-[0_0_24px_rgba(14,165,233,0.5)]" : "border-white/[0.1] bg-ink-900 text-bone-500",
                   )}
                 >
                   {String(i + 1).padStart(2, "0")}

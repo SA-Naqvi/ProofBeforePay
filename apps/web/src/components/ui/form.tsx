@@ -22,7 +22,7 @@ const FIELD =
 function borderFor(error?: string) {
   return error
     ? "border-stop-500/50 focus:border-stop-400 focus:shadow-[0_0_0_4px_rgba(239,69,53,0.12)]"
-    : "border-white/[0.08] hover:border-white/[0.14] focus:border-brand-500/60 focus:shadow-[0_0_0_4px_rgba(118,185,0,0.12)]";
+    : "border-white/[0.08] hover:border-white/[0.14] focus:border-brand-500/60 focus:shadow-[0_0_0_4px_rgba(14,165,233,0.12)]";
 }
 
 export function FieldError({ message, id }: { message?: string; id?: string }) {
@@ -277,8 +277,8 @@ export function OtpInput({
             invalid
               ? "border-stop-500/50"
               : digit
-                ? "border-brand-500/45 shadow-[0_0_0_4px_rgba(118,185,0,0.08)]"
-                : "border-white/[0.08] focus:border-brand-500/60 focus:shadow-[0_0_0_4px_rgba(118,185,0,0.12)]",
+                ? "border-brand-500/45 shadow-[0_0_0_4px_rgba(14,165,233,0.08)]"
+                : "border-white/[0.08] focus:border-brand-500/60 focus:shadow-[0_0_0_4px_rgba(14,165,233,0.12)]",
           )}
         />
       ))}

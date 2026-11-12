@@ -4,6 +4,7 @@ import "lenis/dist/lenis.css";
 import "./globals.css";
 import { MotionNotice } from "@/components/layout/MotionNotice";
 import { RouteProgress } from "@/components/layout/RouteProgress";
+import { SkyBackdrop } from "@/components/layout/SkyBackdrop";
 import { SmoothScroll } from "@/components/layout/SmoothScroll";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist", display: "swap" });
@@ -11,13 +12,13 @@ const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono"
 const instrument = Instrument_Serif({ subsets: ["latin"], weight: "400", style: ["normal", "italic"], variable: "--font-instrument", display: "swap" });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://proofbeforepay-qaax.onrender.com"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
   title: "ProofBeforePay · Check a supplier before you pay the deposit",
   description:
-    "Paste a supplier's invoice or listing. AI agents built on NVIDIA Nemotron check the company, its registration, customs records, certificates, address and photos, following every inconsistency to a verdict on whether it's safe to pay.",
+    "Paste a supplier's invoice or listing. AI agents check the company, its registration, customs records, certificates, address and photos, and the verdict decides what PayPal may do with your deposit: pay now, hold until proven, or block.",
   openGraph: {
     title: "ProofBeforePay",
-    description: "Check a supplier before you pay the deposit. Every claim cited.",
+    description: "AI checks the supplier. PayPal moves the deposit only when it's proven.",
     type: "website",
   },
   twitter: {
@@ -28,8 +29,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#080807",
-  colorScheme: "dark",
+  themeColor: "#f3f8fe",
+  colorScheme: "light",
 };
 
 // Applies the visitor's animation choice before first paint, so the page never flashes the wrong motion setting.
@@ -42,6 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: MOTION_SCRIPT }} />
       </head>
       <body>
+        <SkyBackdrop />
         <SmoothScroll>
           <RouteProgress />
           {children}

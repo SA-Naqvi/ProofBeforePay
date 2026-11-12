@@ -7,47 +7,60 @@
 }
 
 @theme {
-  /* NVIDIA green, the only saturated accent. */
-  --color-brand-100: #eef9d4;
-  --color-brand-200: #dcf3a6;
-  --color-brand-300: #c0e86a;
-  --color-brand-400: #9bd424;
-  --color-brand-500: #76b900;
-  --color-brand-600: #5d9300;
-  --color-brand-700: #446b00;
+  /* Sky & cloud theme. The token names come from the original dark theme and keep their roles, so every component
+     re-themes from here: "ink" is the surface scale (950 = the page), "bone" is the text scale (50 = headings),
+     "brand" is the sky-blue accent. Accent text shades are deep enough to read on the light page (WCAG AA). */
+  --color-brand-100: #0c4a6e;
+  --color-brand-200: #075985;
+  --color-brand-300: #0369a1;
+  --color-brand-400: #0284c7;
+  --color-brand-500: #0277bd;
+  --color-brand-600: #025f99;
+  --color-brand-700: #014a7a;
 
-  /* Warm near-blacks for surfaces. */
-  --color-ink-950: #080807;
-  --color-ink-900: #0d0d0b;
-  --color-ink-850: #121210;
-  --color-ink-800: #191916;
-  --color-ink-700: #23221e;
-  --color-ink-600: #33322c;
+  /* Decorative sky tones (glows, clouds, gradients). Never used for text. */
+  --color-sky-glow: #38bdf8;
+  --color-sky-soft: #bae6fd;
+  --color-sky-mist: #e0f2fe;
 
-  /* Paper tones for text. */
-  --color-bone-50: #f6f3ec;
-  --color-bone-100: #ece8de;
-  --color-bone-200: #d9d4c7;
-  --color-bone-300: #bcb6a7;
-  --color-bone-400: #9b9588;
-  --color-bone-500: #797469;
-  --color-bone-600: #5a564e;
-  --color-bone-700: #3f3c36;
+  /* Cloud-white surfaces: the page is a pale sky, cards are white. */
+  --color-ink-950: #f3f8fe;
+  --color-ink-900: #ffffff;
+  --color-ink-850: #f8fbff;
+  --color-ink-800: #ffffff;
+  --color-ink-700: #e6f0fa;
+  --color-ink-600: #d3e4f4;
+
+  /* Deep navy text, from headings (50) down to faint hints (700). */
+  --color-bone-50: #0a1a33;
+  --color-bone-100: #142a4c;
+  --color-bone-200: #223c63;
+  --color-bone-300: #34507a;
+  --color-bone-400: #4b6688;
+  --color-bone-500: #5f7896;
+  --color-bone-600: #8aa0bb;
+  --color-bone-700: #b7c7d9;
 
   /* Nemotron Super's tier colour. */
-  --color-sand-200: #efe3c4;
-  --color-sand-300: #e2d0a6;
-  --color-sand-400: #cdb684;
+  --color-sand-100: #4d3a10;
+  --color-sand-200: #6e5418;
+  --color-sand-300: #a07d2c;
+  --color-sand-400: #b8964a;
 
-  /* Decision colours: stop and caution (proceed uses brand). */
-  --color-stop-200: #ffc6bd;
-  --color-stop-300: #ff9c8d;
-  --color-stop-400: #ff6f5e;
-  --color-stop-500: #ef4535;
-  --color-caution-200: #fde4ad;
-  --color-caution-300: #f9cf72;
-  --color-caution-400: #f2b33d;
-  --color-caution-500: #d4951b;
+  /* Decision colours: stop and caution (proceed uses brand). Text shades are the darker ones on a light page. */
+  --color-stop-200: #8f1d14;
+  --color-stop-300: #b42318;
+  --color-stop-400: #d92d20;
+  --color-stop-500: #e5483a;
+  --color-caution-200: #7a3e05;
+  --color-caution-300: #93500a;
+  --color-caution-400: #c97a06;
+  --color-caution-500: #d98b0b;
+
+  /* Hairlines and washes were written as white-on-dark ("border-white/[0.06]"); on the light theme they become a
+     navy hairline, and black wells become pale sky. */
+  --color-white: #1d4a7a;
+  --color-black: #cfe2f5;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
@@ -64,12 +77,17 @@
 
 @layer base {
   html {
-    background: var(--color-ink-950);
-    color-scheme: dark;
+    /* A clear sky at the top of every page. Removed background-attachment:fixed which caused
+       a full repaint on every scroll frame — the #1 source of scroll jank. */
+    background:
+      radial-gradient(120% 60% at 50% -10%, rgb(125 211 252 / 0.45), transparent 60%),
+      linear-gradient(180deg, #e3f2ff 0%, var(--color-ink-950) 34%, #f7fbff 100%);
+    background-color: var(--color-ink-950);
+    color-scheme: light;
     -webkit-tap-highlight-color: transparent;
   }
   body {
-    background: var(--color-ink-950);
+    background: transparent;
     color: var(--color-bone-100);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
@@ -78,8 +96,8 @@
     overflow-x: clip;
   }
   ::selection {
-    background: var(--color-brand-500);
-    color: var(--color-ink-950);
+    background: var(--color-sky-soft);
+    color: var(--color-bone-50);
   }
   :focus-visible {
     outline: 2px solid var(--color-brand-400);
@@ -90,39 +108,79 @@
   [role="button"] {
     cursor: pointer;
   }
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--color-bone-600);
+  }
 }
 
-/* ── Film grain over everything ───────────────────────────────────────────── */
-body::after {
-  content: "";
+/* ── Drifting clouds behind every page ────────────────────────────────────── */
+.sky-layer {
   position: fixed;
-  inset: -100%;
-  z-index: 200;
+  inset: 0;
+  z-index: -30;
+  overflow: hidden;
   pointer-events: none;
-  opacity: 0.05;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  animation: grain 1.2s steps(6) infinite;
+}
+.cloud {
+  position: absolute;
+  left: 0;
+  width: var(--w, 420px);
+  aspect-ratio: 2.6;
+  opacity: var(--o, 0.85);
+  filter: blur(var(--b, 1px)) drop-shadow(0 18px 30px rgb(56 140 210 / 0.12));
+  animation: cloud-drift var(--d, 120s) linear infinite;
+  animation-delay: var(--delay, 0s);
+  will-change: transform;
+  contain: layout style paint;
+}
+@keyframes cloud-drift {
+  from { transform: translate3d(-40vw, 0, 0); }
+  to { transform: translate3d(140vw, 0, 0); }
+}
+.cloud-bob {
+  animation: cloud-bob 9s ease-in-out infinite;
+}
+@keyframes cloud-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
 }
 
-@keyframes grain {
-  0% { transform: translate(0, 0); }
-  20% { transform: translate(-3%, 2%); }
-  40% { transform: translate(2%, -3%); }
-  60% { transform: translate(-2%, -1%); }
-  80% { transform: translate(3%, 3%); }
-  100% { transform: translate(0, 0); }
+/* The deposit token travelling along the PayPal hold flow on the home page. */
+.pp-token {
+  animation: pp-token 6s var(--ease-in-out-quart) infinite;
+}
+@keyframes pp-token {
+  0% { left: 12%; opacity: 0; }
+  8% { opacity: 1; }
+  30% { left: 37%; }
+  55% { left: 62%; }
+  85% { left: 87%; opacity: 1; }
+  100% { left: 87%; opacity: 0; }
 }
 
 /* ── Backgrounds ──────────────────────────────────────────────────────────── */
 .bg-grid {
   background-image:
-    linear-gradient(to right, rgb(246 243 236 / 0.045) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(246 243 236 / 0.045) 1px, transparent 1px);
+    linear-gradient(to right, rgb(29 74 122 / 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(29 74 122 / 0.06) 1px, transparent 1px);
   background-size: 72px 72px;
 }
 .bg-dots {
-  background-image: radial-gradient(rgb(246 243 236 / 0.09) 1px, transparent 1px);
+  background-image: radial-gradient(rgb(29 74 122 / 0.12) 1px, transparent 1px);
   background-size: 18px 18px;
+}
+.text-sky-gradient {
+  background: linear-gradient(100deg, #0369a1 0%, #0ea5e9 45%, #38bdf8 70%, #0284c7 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: sky-sheen 8s ease-in-out infinite;
+}
+@keyframes sky-sheen {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 .mask-radial {
   mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 30%, transparent 75%);
@@ -140,17 +198,20 @@ body::after {
 /* ── Surfaces ─────────────────────────────────────────────────────────────── */
 .panel {
   border-radius: 1.25rem;
-  border: 1px solid rgb(246 243 236 / 0.075);
-  background: linear-gradient(180deg, rgb(25 25 22 / 0.82), rgb(13 13 11 / 0.82));
+  border: 1px solid rgb(29 74 122 / 0.1);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.94), rgb(248 251 255 / 0.9));
   box-shadow:
-    inset 0 1px 0 rgb(246 243 236 / 0.05),
-    0 24px 60px -32px rgb(0 0 0 / 0.85);
+    inset 0 1px 0 rgb(255 255 255 / 0.9),
+    0 1px 2px rgb(16 56 100 / 0.05),
+    0 24px 60px -34px rgb(16 72 130 / 0.35);
+  transition: box-shadow 0.5s var(--ease-out-expo), border-color 0.5s var(--ease-out-expo);
 }
 .glass {
-  background: rgb(18 18 16 / 0.62);
-  backdrop-filter: blur(18px) saturate(150%);
-  -webkit-backdrop-filter: blur(18px) saturate(150%);
-  border: 1px solid rgb(246 243 236 / 0.08);
+  background: rgb(255 255 255 / 0.72);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  border: 1px solid rgb(29 74 122 / 0.1);
+  box-shadow: 0 8px 30px -18px rgb(16 72 130 / 0.3);
 }
 
 /* Cursor-following border light and sheen (Magic UI "magic card" style). */
@@ -171,14 +232,21 @@ body::after {
 .spot::before {
   z-index: 2;
   padding: 1px;
-  background: radial-gradient(340px circle at var(--mx, -999px) var(--my, -999px), rgb(155 212 36 / 0.6), transparent 62%);
+  background: radial-gradient(340px circle at var(--mx, -999px) var(--my, -999px), rgb(14 165 233 / 0.65), transparent 62%);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
 }
 .spot::after {
   z-index: -1;
-  background: radial-gradient(520px circle at var(--mx, -999px) var(--my, -999px), rgb(246 243 236 / 0.045), transparent 55%);
+  background: radial-gradient(520px circle at var(--mx, -999px) var(--my, -999px), rgb(56 189 248 / 0.09), transparent 55%);
+}
+.panel.spot:hover {
+  border-color: rgb(14 165 233 / 0.22);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.9),
+    0 1px 2px rgb(16 56 100 / 0.05),
+    0 30px 70px -32px rgb(14 120 200 / 0.4);
 }
 .spot:hover::before,
 .spot:hover::after {
@@ -202,7 +270,7 @@ body::after {
   border-radius: inherit;
   padding: 1px;
   pointer-events: none;
-  background: conic-gradient(from var(--beam-angle), transparent 0 68%, rgb(155 212 36 / 0.0) 70%, rgb(192 232 106 / 0.95) 82%, rgb(155 212 36 / 0) 90%, transparent);
+  background: conic-gradient(from var(--beam-angle), transparent 0 68%, rgb(14 165 233 / 0) 70%, rgb(14 165 233 / 0.95) 82%, rgb(56 189 248 / 0) 90%, transparent);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
@@ -227,7 +295,7 @@ body::after {
   width: 260%;
   aspect-ratio: 1;
   border-radius: 9999px;
-  background: var(--btn-fill, rgb(246 243 236 / 0.08));
+  background: var(--btn-fill, rgb(29 74 122 / 0.07));
   transform: translate(-50%, -50%) scale(0);
   transition: transform 0.7s var(--ease-out-expo);
 }
@@ -256,7 +324,7 @@ body::after {
 
 /* ── Loading states ───────────────────────────────────────────────────────── */
 .skeleton {
-  background: linear-gradient(90deg, rgb(246 243 236 / 0.035) 0%, rgb(246 243 236 / 0.09) 50%, rgb(246 243 236 / 0.035) 100%);
+  background: linear-gradient(90deg, rgb(186 230 253 / 0.25) 0%, rgb(186 230 253 / 0.6) 50%, rgb(186 230 253 / 0.25) 100%);
   background-size: 200% 100%;
   animation: var(--animate-shimmer);
 }
@@ -284,8 +352,8 @@ body::after {
   animation: flash 1.6s var(--ease-out-expo);
 }
 @keyframes flash {
-  0%, 30% { box-shadow: 0 0 0 2px rgb(155 212 36 / 0.85), 0 0 40px -6px rgb(155 212 36 / 0.6); }
-  100% { box-shadow: 0 0 0 2px rgb(155 212 36 / 0), 0 0 40px -6px rgb(155 212 36 / 0); }
+  0%, 30% { box-shadow: 0 0 0 2px rgb(14 165 233 / 0.85), 0 0 40px -6px rgb(56 189 248 / 0.6); }
+  100% { box-shadow: 0 0 0 2px rgb(14 165 233 / 0), 0 0 40px -6px rgb(56 189 248 / 0); }
 }
 
 /* Rubber-stamp texture for decision stamps. */
@@ -298,7 +366,7 @@ body::after {
 .hl {
   background-color: transparent;
   color: inherit;
-  background-image: linear-gradient(var(--hl, rgb(255 111 94 / 0.22)), var(--hl, rgb(255 111 94 / 0.22)));
+  background-image: linear-gradient(var(--hl, rgb(229 72 58 / 0.18)), var(--hl, rgb(229 72 58 / 0.18)));
   background-repeat: no-repeat;
   background-size: 0% 100%;
   border-radius: 3px;
@@ -310,7 +378,7 @@ body::after {
 
 .scroll-slim {
   scrollbar-width: thin;
-  scrollbar-color: rgb(246 243 236 / 0.14) transparent;
+  scrollbar-color: rgb(29 74 122 / 0.2) transparent;
 }
 
 .text-balance {
@@ -333,8 +401,8 @@ body::after {
   to { background-position: -200% 0; }
 }
 @keyframes pulse-ring {
-  0% { box-shadow: 0 0 0 0 rgb(155 212 36 / 0.45); }
-  100% { box-shadow: 0 0 0 10px rgb(155 212 36 / 0); }
+  0% { box-shadow: 0 0 0 0 rgb(14 165 233 / 0.45); }
+  100% { box-shadow: 0 0 0 10px rgb(14 165 233 / 0); }
 }
 @keyframes caret {
   0%, 50% { opacity: 1; }
@@ -394,9 +462,12 @@ body::after {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-  :root:not([data-motion="full"]) body::after {
+  :root:not([data-motion="full"]) .cloud {
     animation: none;
   }
+}
+:root[data-motion="reduced"] .cloud {
+  animation: none;
 }
 :root[data-motion="reduced"] *,
 :root[data-motion="reduced"] *::before,

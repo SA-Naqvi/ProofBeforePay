@@ -5,6 +5,7 @@ import { Hero } from "@/components/marketing/Hero";
 import { HowItWorks } from "@/components/marketing/HowItWorks";
 import { LiveStats } from "@/components/marketing/LiveStats";
 import { Outcomes } from "@/components/marketing/Outcomes";
+import { PayPalSection } from "@/components/marketing/PayPalSection";
 import { Principles } from "@/components/marketing/Principles";
 import { RoutingSection } from "@/components/marketing/RoutingSection";
 import { StatSection } from "@/components/marketing/StatSection";
@@ -19,6 +20,7 @@ export default function Home() {
       <TrySection />
       <StatSection />
       <HowItWorks />
+      <PayPalSection />
       <RoutingSection />
       <Outcomes />
       <Principles />

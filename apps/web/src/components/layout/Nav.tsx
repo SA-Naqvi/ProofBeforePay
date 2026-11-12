@@ -136,7 +136,7 @@ export function Nav() {
         className={cx(
           "relative z-10 flex w-full max-w-6xl items-center justify-between gap-3 rounded-2xl border py-2 pr-2 pl-3 transition-[background-color,border-color,box-shadow,backdrop-filter] duration-500",
           scrolled || open
-            ? "border-white/[0.08] bg-ink-900/70 shadow-[0_18px_40px_-24px_rgba(0,0,0,0.9)] backdrop-blur-xl backdrop-saturate-150"
+            ? "border-white/[0.08] bg-ink-900/70 shadow-[0_18px_40px_-24px_rgba(16,72,130,0.28)] backdrop-blur-xl backdrop-saturate-150"
             : "border-transparent bg-transparent",
         )}
         aria-label="Main"

@@ -81,7 +81,7 @@ export function VerifyForm() {
             initial={{ scale: 0, rotate: -45 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ type: "spring", stiffness: 260, damping: 16 }}
-            className="mx-auto grid size-20 place-items-center rounded-full bg-brand-500 text-ink-950 shadow-[0_0_60px_-6px_rgba(118,185,0,0.7)]"
+            className="mx-auto grid size-20 place-items-center rounded-full bg-brand-500 text-ink-950 shadow-[0_0_60px_-6px_rgba(14,165,233,0.7)]"
           >
             <Check className="size-10" strokeWidth={3} aria-hidden />
           </motion.span>

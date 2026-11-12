@@ -68,9 +68,9 @@ export function Spinner({ className }: { className?: string }) {
 
 /** Tier colours run from bright to dim with model size: Ultra in NVIDIA green, Super in sand, Nano in stone. */
 export const TIER_STYLE: Record<TierName, { label: string; dot: string; text: string; chip: string; bar: string; hex: string }> = {
-  ultra: { label: "Ultra", dot: "bg-brand-400", text: "text-brand-300", chip: "bg-brand-500/10 ring-brand-500/30", bar: "bg-brand-400", hex: "#9bd424" },
-  super: { label: "Super", dot: "bg-sand-300", text: "text-sand-200", chip: "bg-sand-300/[0.08] ring-sand-300/25", bar: "bg-sand-300", hex: "#e2d0a6" },
-  nano: { label: "Nano", dot: "bg-bone-400", text: "text-bone-300", chip: "bg-bone-400/[0.08] ring-bone-400/25", bar: "bg-bone-500", hex: "#9b9588" },
+  ultra: { label: "Ultra", dot: "bg-brand-400", text: "text-brand-300", chip: "bg-brand-500/10 ring-brand-500/30", bar: "bg-brand-400", hex: "#0ea5e9" },
+  super: { label: "Super", dot: "bg-sand-300", text: "text-sand-200", chip: "bg-sand-300/[0.08] ring-sand-300/25", bar: "bg-sand-300", hex: "#a07d2c" },
+  nano: { label: "Nano", dot: "bg-bone-400", text: "text-bone-300", chip: "bg-bone-400/[0.08] ring-bone-400/25", bar: "bg-bone-500", hex: "#5f7896" },
 };
 
 export function TierBadge({ tier, prefix = "Nemotron", className }: { tier: TierName; prefix?: string; className?: string }) {
@@ -101,8 +101,8 @@ export const DECISION_STYLE: Record<
     chip: "bg-brand-500/10 ring-brand-500/30 text-brand-300",
     border: "border-brand-500/25",
     icon: ShieldCheck,
-    hex: "#9bd424",
-    glow: "rgb(118 185 0 / 0.22)",
+    hex: "#0ea5e9",
+    glow: "rgb(14 165 233 / 0.22)",
   },
   VERIFY_FIRST: {
     label: "Verify first",
@@ -111,8 +111,8 @@ export const DECISION_STYLE: Record<
     chip: "bg-caution-400/10 ring-caution-400/30 text-caution-300",
     border: "border-caution-400/25",
     icon: ShieldQuestionMark,
-    hex: "#f2b33d",
-    glow: "rgb(242 179 61 / 0.2)",
+    hex: "#d98b0b",
+    glow: "rgb(217 139 11 / 0.2)",
   },
   STOP: {
     label: "Stop",
@@ -121,7 +121,7 @@ export const DECISION_STYLE: Record<
     chip: "bg-stop-500/10 ring-stop-500/30 text-stop-300",
     border: "border-stop-500/30",
     icon: ShieldAlert,
-    hex: "#ff6f5e",
+    hex: "#e5483a",
     glow: "rgb(239 69 53 / 0.24)",
   },
 };

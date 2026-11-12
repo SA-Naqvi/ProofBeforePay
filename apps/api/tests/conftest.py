@@ -58,6 +58,10 @@ def rt(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Any:
     monkeypatch.setattr(settings, "nebius_api_key", "test")
     monkeypatch.setattr(settings, "tavily_api_key", "test")
     monkeypatch.setattr(settings, "admin_emails", frozenset({"admin@example.com"}))
+    # Payments start switched off whatever the developer's .env says; payment tests switch them on with a fake gateway.
+    monkeypatch.setattr(settings, "paypal_client_id", "")
+    monkeypatch.setattr(settings, "paypal_client_secret", "")
+    monkeypatch.setattr(settings, "paypal_webhook_id", "")
     test_runtime = runtime.build(
         settings,
         db=MemoryDatabase(),

@@ -15,7 +15,7 @@ function ConfidenceRing({ value, color }: { value: number; color: string }) {
   return (
     <div className="relative size-36 shrink-0">
       <svg viewBox="0 0 120 120" className="size-full -rotate-90" aria-hidden>
-        <circle cx="60" cy="60" r={r} fill="none" stroke="rgb(246 243 236 / 0.07)" strokeWidth="6" />
+        <circle cx="60" cy="60" r={r} fill="none" stroke="rgb(29 74 122 / 0.07)" strokeWidth="6" />
         <circle
           data-ring
           cx="60"

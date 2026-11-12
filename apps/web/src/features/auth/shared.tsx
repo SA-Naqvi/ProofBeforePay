@@ -50,11 +50,11 @@ export function SubmitButton({ busy, children, disabled, className }: { busy: bo
       type="submit"
       disabled={busy || disabled}
       className={cx(
-        "group relative flex h-12 w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-brand-500 text-[15px] font-semibold text-ink-950 shadow-[0_0_0_1px_rgba(118,185,0,0.45),0_14px_34px_-14px_rgba(118,185,0,0.75)] transition-[transform,opacity,background-color] duration-300 hover:bg-brand-400 active:scale-[0.98] disabled:opacity-60",
+        "group relative flex h-12 w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-brand-500 text-[15px] font-semibold text-ink-950 shadow-[0_0_0_1px_rgba(14,165,233,0.45),0_14px_34px_-14px_rgba(14,165,233,0.75)] transition-[transform,opacity,background-color] duration-300 hover:bg-brand-400 active:scale-[0.98] disabled:opacity-60",
         className,
       )}
     >
-      <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/35 to-transparent transition-transform duration-700 group-hover:translate-x-full" aria-hidden />
+      <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-[rgb(255_255_255/0.4)] to-transparent transition-transform duration-700 group-hover:translate-x-full" aria-hidden />
       {busy ? <Spinner className="size-4" /> : null}
       <span className="relative">{children}</span>
       {!busy && <ArrowRight className="relative size-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />}

@@ -27,10 +27,10 @@ interface TrailEdge {
 }
 
 const TONE: Record<Tone, { card: string; text: string; hex: string }> = {
-  red: { card: "border-stop-500/30 bg-stop-500/[0.07]", text: "text-stop-300", hex: "#ff6f5e" },
-  amber: { card: "border-caution-400/30 bg-caution-400/[0.06]", text: "text-caution-300", hex: "#f2b33d" },
-  green: { card: "border-brand-500/30 bg-brand-500/[0.07]", text: "text-brand-300", hex: "#9bd424" },
-  neutral: { card: "border-white/[0.09] bg-white/[0.025]", text: "text-bone-400", hex: "#c9c1b1" },
+  red: { card: "border-stop-500/30 bg-stop-500/[0.07]", text: "text-stop-300", hex: "#e5483a" },
+  amber: { card: "border-caution-400/30 bg-caution-400/[0.06]", text: "text-caution-300", hex: "#d98b0b" },
+  green: { card: "border-brand-500/30 bg-brand-500/[0.07]", text: "text-brand-300", hex: "#0ea5e9" },
+  neutral: { card: "border-white/[0.09] bg-white/[0.025]", text: "text-bone-400", hex: "#8aa0bb" },
 };
 
 const CLAIM = {
@@ -243,7 +243,7 @@ export function ProofTrail({ report }: { report: Report }) {
                         "relative w-full rounded-xl border px-3 py-2 text-left transition-[filter,translate,box-shadow] duration-300 hover:-translate-y-0.5",
                         tone.card,
                         dim && "brightness-[0.35] saturate-50",
-                        selected === node.id && "shadow-[0_0_0_1px_rgba(246,243,236,0.35)]",
+                        selected === node.id && "shadow-[0_0_0_1px_rgba(29,74,122,0.35)]",
                         big && "px-4 py-4",
                         node.kind === "challenge" && "before:absolute before:-top-2.5 before:left-1/2 before:h-2.5 before:w-px before:bg-white/20",
                       )}

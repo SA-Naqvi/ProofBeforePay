@@ -1,8 +1,10 @@
-# Terminal 1: backend
-cd C:\Users\AWCD\Desktop\Project\NIVIDIA\apps\api
-.venv\Scripts\activate
-uvicorn app.main:app --reload --port 8000
+# From the repository root (Windows). Or just double-click run.bat.
 
-# Terminal 2: frontend
-cd C:\Users\AWCD\Desktop\Project\NIVIDIA\apps\web
+# Terminal 1: backend (FastAPI on :8000)
+cd apps\api
+.venv\Scripts\activate
+uvicorn app.main:app --port 8000
+
+# Terminal 2: frontend (Next.js on :3000, proxies /api to :8000)
+cd apps\web
 npm run dev

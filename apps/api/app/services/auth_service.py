@@ -20,6 +20,8 @@ CODE_TTL = timedelta(minutes=10)
 CODE_ATTEMPTS = 5
 RESEND_AFTER = timedelta(seconds=45)
 SESSION_TTL = timedelta(days=30)
+# Published in the README so judges can also sign in by hand. Demo accounts can't be renamed, reset or deleted.
+DEMO_PASSWORD = "ProofBeforePay-Demo-2026"
 
 
 class AuthError(Exception):
@@ -161,10 +163,16 @@ class AuthService:
         """The shared judge or admin demo account, for the one-click sign-in on the login page."""
         if not self.settings.demo_login:
             raise AuthError(404, "Demo sign-in is turned off on this server.", "demo_off")
-        email = self.settings.demo_admin_email if kind == "admin" else self.settings.demo_judge_email
+        admin = kind == "admin"
+        email = self.settings.demo_admin_email if admin else self.settings.demo_judge_email
         row = await self.users.by_email(email)
-        if not row or not row.get("verified_at"):
-            raise AuthError(404, "The demo accounts aren't set up on this server yet.", "demo_missing")
+        if row is None:
+            # First use on a fresh database (or the in-memory store after a restart): create the shared account,
+            # verified, so judges never meet a dead "Demo account" button.
+            row = await self.users.create("Demo Admin" if admin else "Demo Judge", email, hash_password(DEMO_PASSWORD))
+        if not row.get("verified_at"):
+            await self.users.update(row["id"], verified_at=now().isoformat())
+            row = await self.users.by_email(email) or row
         return self.user(row)
 
     async def delete_account(self, user: User) -> None:

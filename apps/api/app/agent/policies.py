@@ -20,7 +20,7 @@ POLARITIES = ("red", "green", "amber")
 TOOLS = ("registry", "trade", "certificate", "domain", "address", "image", "web")
 
 # Payment terms that are risky however the rest of the checks come out.
-MONEY_RULES = ("personal_account", "irreversible_payment", "full_prepayment", "beneficiary_mismatch")
+MONEY_RULES = ("personal_account", "irreversible_payment", "paypal_unprotected", "full_prepayment", "beneficiary_mismatch")
 # Findings that show the supplier is not who it says it is. A Stop cannot be argued down past these.
 IDENTITY_RULES = ("reg_mismatch", "cert_invalid", "image_reuse", "identity_conflict")
 HARD_RULES = MONEY_RULES + IDENTITY_RULES

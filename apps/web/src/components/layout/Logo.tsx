@@ -7,8 +7,8 @@ export function LogoMark({ className }: { className?: string }) {
       <g className="origin-center transition-transform duration-[1.4s] ease-out-expo group-hover:rotate-180" style={{ transformBox: "fill-box" }}>
         <circle cx="16" cy="16" r="14.25" fill="none" stroke="currentColor" strokeWidth="1.5" strokeDasharray="2.2 2.35" opacity="0.6" />
       </g>
-      <circle cx="16" cy="16" r="10" fill="#76b900" />
-      <path d="M11.6 16.4l3 3 5.9-6.2" fill="none" stroke="#080807" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="16" cy="16" r="10" fill="#0ea5e9" />
+      <path d="M11.6 16.4l3 3 5.9-6.2" fill="none" stroke="#ffffff" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }

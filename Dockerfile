@@ -7,7 +7,8 @@ COPY apps/web/package.json apps/web/package-lock.json ./
 RUN npm ci --no-audit --no-fund
 COPY apps/web/ ./
 ARG NEXT_PUBLIC_REPO_URL=""
-ENV NEXT_PUBLIC_REPO_URL=$NEXT_PUBLIC_REPO_URL NEXT_TELEMETRY_DISABLED=1
+ARG NEXT_PUBLIC_SITE_URL="http://localhost:8000"
+ENV NEXT_PUBLIC_REPO_URL=$NEXT_PUBLIC_REPO_URL NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
 # ── 2. The FastAPI service (apps/api), which also serves the exported site ───

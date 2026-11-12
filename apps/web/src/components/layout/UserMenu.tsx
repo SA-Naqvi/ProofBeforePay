@@ -69,7 +69,7 @@ export function UserMenu({ user, align = "right" }: { user: User; align?: "right
             exit={{ opacity: 0, y: -6, scale: 0.97 }}
             transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
             className={cx(
-              "absolute top-11 z-50 w-64 origin-top rounded-2xl border border-white/[0.09] bg-ink-850/95 p-1.5 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.9)] backdrop-blur-xl",
+              "absolute top-11 z-50 w-64 origin-top rounded-2xl border border-white/[0.09] bg-ink-850/95 p-1.5 shadow-[0_24px_60px_-20px_rgba(16,72,130,0.28)] backdrop-blur-xl",
               align === "right" ? "right-0" : "left-0",
             )}
           >

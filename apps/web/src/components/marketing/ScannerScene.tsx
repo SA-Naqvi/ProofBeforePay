@@ -70,9 +70,9 @@ const SCENES: Scene[] = [
 ];
 
 const TONE = {
-  stop: { hex: "#ff6f5e", hl: "rgb(255 111 94 / 0.2)", chip: "border-stop-500/35", dot: "bg-stop-400", text: "text-stop-200" },
-  caution: { hex: "#f9cf72", hl: "rgb(242 179 61 / 0.2)", chip: "border-caution-400/35", dot: "bg-caution-400", text: "text-caution-200" },
-  go: { hex: "#c0e86a", hl: "rgb(155 212 36 / 0.2)", chip: "border-brand-500/35", dot: "bg-brand-400", text: "text-brand-200" },
+  stop: { hex: "#e5483a", hl: "rgb(229 72 58 / 0.16)", chip: "border-stop-500/35", dot: "bg-stop-400", text: "text-stop-200" },
+  caution: { hex: "#d98b0b", hl: "rgb(217 139 11 / 0.2)", chip: "border-caution-400/35", dot: "bg-caution-400", text: "text-caution-200" },
+  go: { hex: "#0284c7", hl: "rgb(56 189 248 / 0.2)", chip: "border-brand-500/35", dot: "bg-brand-400", text: "text-brand-200" },
 } as const;
 
 const CHIP_DEPTH = [110, 150, 90, 130];
@@ -229,7 +229,7 @@ export function ScannerScene() {
           {/* The message */}
           <div
             ref={card}
-            className="absolute top-[16%] left-[1%] w-[63%] overflow-hidden rounded-[22px] border border-white/[0.09] bg-gradient-to-b from-ink-800 to-ink-900 p-5 shadow-[0_50px_100px_-30px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.06)]"
+            className="absolute top-[16%] left-[1%] w-[63%] overflow-hidden rounded-[22px] border border-white/[0.09] bg-gradient-to-b from-ink-800 to-ink-900 p-5 shadow-[0_50px_100px_-30px_rgba(16,72,130,0.3),inset_0_1px_0_rgba(29,74,122,0.06)]"
           >
             <div data-swap className="flex items-center gap-3">
               <span className="grid size-9 place-items-center rounded-full bg-bone-200 text-[12px] font-semibold text-ink-900">{scene.initials}</span>
@@ -252,7 +252,7 @@ export function ScannerScene() {
             {/* Scanner beam */}
             <div data-scan className="pointer-events-none absolute inset-x-0 top-0">
               <div className="absolute inset-x-0 -top-16 h-16 bg-gradient-to-b from-transparent to-brand-400/[0.12]" />
-              <div className="h-[2px] bg-gradient-to-r from-transparent via-brand-300 to-transparent shadow-[0_0_24px_6px_rgba(155,212,36,0.45)]" />
+              <div className="h-[2px] bg-gradient-to-r from-transparent via-brand-300 to-transparent shadow-[0_0_24px_6px_rgba(56,189,248,0.45)]" />
             </div>
           </div>
 
@@ -262,7 +262,7 @@ export function ScannerScene() {
               key={`${index}-${i}`}
               data-chip={i}
               className={cx(
-                "glass absolute left-[61%] flex items-center gap-2.5 rounded-xl border px-3 py-2 whitespace-nowrap shadow-[0_24px_40px_-18px_rgba(0,0,0,0.9)]",
+                "glass absolute left-[61%] flex items-center gap-2.5 rounded-xl border px-3 py-2 whitespace-nowrap shadow-[0_24px_40px_-18px_rgba(16,72,130,0.28)]",
                 TONE[hit.tone].chip,
               )}
             >

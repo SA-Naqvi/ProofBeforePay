@@ -53,8 +53,8 @@ function DecisionMock() {
         </div>
         <div className="relative size-28 shrink-0">
           <svg viewBox="0 0 110 110" className="size-full -rotate-90" aria-hidden>
-            <circle cx="55" cy="55" r={r} fill="none" stroke="rgb(246 243 236 / 0.07)" strokeWidth="6" />
-            <circle ref={ring} cx="55" cy="55" r={r} fill="none" stroke="#ff6f5e" strokeWidth="6" strokeLinecap="round" strokeDasharray={c} strokeDashoffset={c * 0.06} />
+            <circle cx="55" cy="55" r={r} fill="none" stroke="rgb(29 74 122 / 0.07)" strokeWidth="6" />
+            <circle ref={ring} cx="55" cy="55" r={r} fill="none" stroke="#e5483a" strokeWidth="6" strokeLinecap="round" strokeDasharray={c} strokeDashoffset={c * 0.06} />
           </svg>
           <span className="absolute inset-0 grid place-items-center text-2xl font-semibold tracking-[-0.04em] text-bone-50">94</span>
         </div>
@@ -94,7 +94,7 @@ function ReplyMock() {
   );
 }
 
-const TRAIL_TONE = { r: "#ff6f5e", g: "#9bd424", n: "#c9c1b1" } as const;
+const TRAIL_TONE = { r: "#e5483a", g: "#0ea5e9", n: "#8aa0bb" } as const;
 const TRAIL_NODES = [
   { id: "s1", x: 4, y: 18, w: 104, tag: "S3", text: "opencorporates", tone: "n" },
   { id: "s2", x: 4, y: 74, w: 104, tag: "S7", text: "importyeti", tone: "n" },
@@ -123,7 +123,7 @@ function TrailMock() {
         const d = `M ${x1} ${y1} C ${x1 + 24} ${y1}, ${x2 - 24} ${y2}, ${x2} ${y2}`;
         return (
           <g key={`${from}-${to}`}>
-            <path d={d} fill="none" stroke={lit ? TRAIL_TONE.r : "rgb(246 243 236 / 0.12)"} strokeWidth={1.2} className={lit ? "opacity-40 transition-opacity duration-500 group-hover:opacity-100" : ""} />
+            <path d={d} fill="none" stroke={lit ? TRAIL_TONE.r : "rgb(29 74 122 / 0.12)"} strokeWidth={1.2} className={lit ? "opacity-40 transition-opacity duration-500 group-hover:opacity-100" : ""} />
             {lit && <path d={d} fill="none" stroke={TRAIL_TONE.r} strokeWidth={2} strokeLinecap="round" className="trail-flow opacity-0 transition-opacity duration-500 group-hover:opacity-100" />}
           </g>
         );
@@ -132,7 +132,7 @@ function TrailMock() {
         const color = TRAIL_TONE[n.tone];
         return (
           <g key={n.id}>
-            <rect x={n.x} y={n.y} width={n.w} height={26} rx={7} fill={n.tone === "n" ? "rgb(246 243 236 / 0.03)" : `${color}14`} stroke={n.tone === "n" ? "rgb(246 243 236 / 0.12)" : `${color}55`} />
+            <rect x={n.x} y={n.y} width={n.w} height={26} rx={7} fill={n.tone === "n" ? "rgb(29 74 122 / 0.03)" : `${color}14`} stroke={n.tone === "n" ? "rgb(29 74 122 / 0.12)" : `${color}55`} />
             {n.tag ? (
               <>
                 <text x={n.x + 8} y={n.y + 17} className="fill-bone-500 font-mono text-[9px]">{n.tag}</text>
@@ -217,7 +217,7 @@ function ReplayMock() {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
-        <span className="grid size-10 place-items-center rounded-full bg-brand-500 text-ink-950 shadow-[0_0_24px_rgba(118,185,0,0.5)]">
+        <span className="grid size-10 place-items-center rounded-full bg-brand-500 text-ink-950 shadow-[0_0_24px_rgba(14,165,233,0.5)]">
           <Play className="size-4 translate-x-px fill-current" aria-hidden />
         </span>
         <div className="flex-1">

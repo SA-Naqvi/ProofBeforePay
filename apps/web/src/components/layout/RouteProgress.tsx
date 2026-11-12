@@ -33,7 +33,7 @@ export function RouteProgress() {
       {phase !== "idle" && (
         <motion.div
           key="bar"
-          className="pointer-events-none fixed inset-x-0 top-0 z-[80] h-[2px] origin-left bg-gradient-to-r from-brand-600 via-brand-400 to-brand-200 shadow-[0_0_12px_rgba(155,212,36,0.8)]"
+          className="pointer-events-none fixed inset-x-0 top-0 z-[80] h-[2px] origin-left bg-gradient-to-r from-brand-600 via-brand-400 to-brand-200 shadow-[0_0_12px_rgba(56,189,248,0.8)]"
           initial={{ scaleX: 0, opacity: 1 }}
           animate={phase === "loading" ? { scaleX: 0.82, transition: { duration: 4, ease: [0.1, 0.8, 0.2, 1] } } : { scaleX: 1, transition: { duration: 0.25 } }}
           exit={{ opacity: 0, transition: { duration: 0.3 } }}

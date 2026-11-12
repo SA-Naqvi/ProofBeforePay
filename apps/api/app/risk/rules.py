@@ -29,8 +29,19 @@ RULES = (
         "irreversible_payment",
         "Mentions hard-to-reverse payment methods",
         "high",
-        _rx(r"\b(?:bitcoin|btc|usdt|crypto(?:currency)?|gift\s*cards?|western\s+union|moneygram|zelle|cash\s*app|paypal\s+friends)\b"),
+        _rx(r"\b(?:bitcoin|btc|usdt|crypto(?:currency)?|gift\s*cards?|western\s+union|moneygram|zelle|cash\s*app)\b"),
         "Crypto, gift cards and wire services can't be recalled, which is why fraud prefers them.",
+    ),
+    Rule(
+        "paypal_unprotected",
+        "Asks for a PayPal payment without Purchase Protection",
+        "high",
+        _rx(r"\bfriends?\s*(?:and|&|n)\s*family\b|\bf\s*&\s*f\b|\bf\s*n\s*f\b"
+            r"|\b(?:send|pay|mark)\b[^.\n]{0,25}\bas\s+(?:a\s+)?(?:gift|personal\s+payment|family\s+payment)\b"
+            r"|\bpaypal\b[^.\n]{0,40}\b(?:personal\s+payment|send\s+to\s+(?:a\s+)?friend)\b"
+            r"|\b(?:don'?t|do\s+not|never)\s+(?:mention|write|add|put)\b[^.\n]{0,30}\b(?:goods|items?|orders?|products?|invoice|business)\b"),
+        "PayPal Friends & Family and 'gift' payments are not covered by Purchase Protection, so a supplier asking for "
+        "them is asking you to give up your right to a refund. Pay a business through PayPal Goods & Services.",
     ),
     Rule(
         "full_prepayment",

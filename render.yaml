@@ -5,10 +5,35 @@ services:
     plan: free
     healthCheckPath: /api/v1/health
     envVars:
+      # AI: NVIDIA Nemotron on Nebius Token Factory, and Tavily for web evidence
       - key: NEBIUS_API_KEY
         sync: false
       - key: TAVILY_API_KEY
         sync: false
+      # PayPal (sandbox): Orders v2 + Payments v2 through the official paypal-server-sdk
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false
+      - key: PAYPAL_ENV
+        value: sandbox
+      - key: PAYPAL_CURRENCY
+        value: USD
+      - key: PAYPAL_WEBHOOK_ID
+        sync: false
+      - key: DEMO_SUPPLIER_PAYPAL_EMAIL
+        sync: false
+      - key: PAYPAL_SANDBOX_BUYER_EMAIL
+        sync: false
+      - key: PAYPAL_SANDBOX_BUYER_PASSWORD
+        sync: false
+      - key: MAX_DEPOSIT
+        value: "10000"
+      - key: CREDITS_PER_CHECK
+        value: "1"
+      - key: STARTING_CREDITS
+        value: "3"
+      # Persistence and accounts
       - key: SUPABASE_URL
         sync: false
       - key: SUPABASE_SECRET_KEY
@@ -21,6 +46,7 @@ services:
         sync: false
       - key: EMAIL_TEST_INBOX
         sync: false
+      # The public https:// address of this service, used for PayPal return URLs and emails
       - key: PUBLIC_URL
         sync: false
       - key: AUTH_SECRET
@@ -34,4 +60,6 @@ services:
       - key: MAX_SPEND_USD
         value: "5.00"
       - key: NEXT_PUBLIC_REPO_URL
-        value: "https://github.com/TheBossMan110/ProofBeforePay"
+        sync: false
+      - key: NEXT_PUBLIC_SITE_URL
+        sync: false

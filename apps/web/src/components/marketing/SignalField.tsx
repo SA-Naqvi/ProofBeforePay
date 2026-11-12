@@ -46,16 +46,17 @@ const fragmentShader = /* glsl */ `
     float soft = smoothstep(0.5, 0.05, r);
     float twinkle = 0.65 + 0.35 * sin(uTime * 1.7 + vSeed * 50.0);
     vec3 color = mix(uBase, uGlow, vLift);
-    float alpha = soft * vFade * mix(0.32, 0.95 * twinkle, vLift);
+    float alpha = soft * vFade * mix(0.3, 0.85 * twinkle, vLift);
     gl_FragColor = vec4(color, alpha);
   }
 `;
 
 function Field({ pointer }: { pointer: React.RefObject<{ x: number; y: number }> }) {
   const smoothed = useRef(new THREE.Vector2());
+  const _target = useRef(new THREE.Vector2());
   const { geometry, material } = useMemo(() => {
-    const cols = 190;
-    const rows = 74;
+    const cols = 140;
+    const rows = 54;
     const spacing = 0.21;
     const positions = new Float32Array(cols * rows * 3);
     const seeds = new Float32Array(cols * rows);
@@ -76,13 +77,13 @@ function Field({ pointer }: { pointer: React.RefObject<{ x: number; y: number }>
       fragmentShader,
       transparent: true,
       depthWrite: false,
-      blending: THREE.AdditiveBlending,
+      blending: THREE.NormalBlending,
       uniforms: {
         uTime: { value: 0 },
         uPointer: { value: new THREE.Vector2() },
         uPixelRatio: { value: Math.min(window.devicePixelRatio, 1.5) },
-        uBase: { value: new THREE.Color("#6d685e") },
-        uGlow: { value: new THREE.Color("#a6dc2c") },
+        uBase: { value: new THREE.Color("#7fb2e5") },
+        uGlow: { value: new THREE.Color("#0284c7") },
       },
     });
     return { geometry: geo, material: mat };
@@ -100,7 +101,8 @@ function Field({ pointer }: { pointer: React.RefObject<{ x: number; y: number }>
     const uniforms = material.uniforms as Record<string, THREE.IUniform>;
     uniforms.uTime!.value += Math.min(delta, 0.05);
     const target = pointer.current ?? { x: 0, y: 0 };
-    smoothed.current.lerp(new THREE.Vector2(target.x, target.y), 0.05);
+    _target.current.set(target.x, target.y);
+    smoothed.current.lerp(_target.current, 0.05);
     (uniforms.uPointer!.value as THREE.Vector2).copy(smoothed.current);
     state.camera.position.x = THREE.MathUtils.lerp(state.camera.position.x, smoothed.current.x * 1.2, 0.04);
     state.camera.lookAt(0, -0.4, 0);

@@ -25,7 +25,7 @@ export function PageHero({ eyebrow, title, lede, children }: { eyebrow: string; 
       <div className="relative mx-auto max-w-5xl px-5 text-center sm:px-8">
         <Reveal y={10}>
           <p className="inline-flex items-center gap-3 rounded-full border border-white/[0.08] bg-white/[0.03] px-4 py-1.5 font-mono text-[11px] tracking-[0.18em] text-bone-400 uppercase backdrop-blur">
-            <span className="size-1.5 rounded-full bg-brand-400 shadow-[0_0_10px_rgba(155,212,36,0.9)]" />
+            <span className="size-1.5 rounded-full bg-brand-400 shadow-[0_0_10px_rgba(56,189,248,0.9)]" />
             {eyebrow}
           </p>
         </Reveal>

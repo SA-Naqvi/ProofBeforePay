@@ -29,7 +29,7 @@ const NAV = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/investigate", label: "New check", icon: ScanSearch },
   { href: "/history", label: "Your checks", icon: History },
-  { href: "/billing", label: "Credits", icon: Coins },
+  { href: "/billing", label: "Payments", icon: Coins },
   { href: "/compare", label: "Compare", icon: GitCompareArrows },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
@@ -176,7 +176,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         {drawer && (
           <>
             <motion.div
-              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm lg:hidden"
+              className="fixed inset-0 z-50 bg-[rgb(10_26_51/0.35)] backdrop-blur-sm lg:hidden"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}

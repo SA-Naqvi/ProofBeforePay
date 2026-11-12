@@ -45,7 +45,7 @@ export function MotionNotice() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 16 }}
-          className="fixed right-3 bottom-3 left-3 z-[60] mx-auto max-w-md rounded-2xl border border-white/[0.1] bg-ink-850/95 p-4 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.9)] backdrop-blur-xl sm:right-auto sm:left-5"
+          className="fixed right-3 bottom-3 left-3 z-[60] mx-auto max-w-md rounded-2xl border border-white/[0.1] bg-ink-850/95 p-4 shadow-[0_24px_60px_-20px_rgba(16,72,130,0.28)] backdrop-blur-xl sm:right-auto sm:left-5"
         >
           <div className="flex gap-3">
             <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-brand-500/10 text-brand-300 ring-1 ring-brand-500/25 ring-inset">

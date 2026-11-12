@@ -152,6 +152,17 @@ def test_demo_admin_sees_the_dashboard_with_people_masked(client: TestClient, rt
     assert message["email"] == "m•••@example.com" and message["name"] == "M•••"
 
 
-def test_demo_sign_in_needs_the_accounts_to_exist(client: TestClient) -> None:
+def test_demo_sign_in_creates_the_shared_account_on_first_use(client: TestClient, rt: Any) -> None:
+    first = client.post("/api/v1/auth/demo", json={"kind": "judge"})
+    assert first.status_code == 200
+    user = first.json()["user"]
+    assert user["email"] == rt.settings.demo_judge_email and user["verified"] and user["demo"]
+    # A second sign-in reuses the same account rather than creating another.
+    again = client.post("/api/v1/auth/demo", json={"kind": "judge"})
+    assert again.json()["user"]["id"] == user["id"]
+
+
+def test_demo_sign_in_can_be_switched_off(client: TestClient, rt: Any, monkeypatch: Any) -> None:
+    monkeypatch.setattr(rt.settings, "demo_login", False)
     response = client.post("/api/v1/auth/demo", json={"kind": "judge"})
-    assert response.status_code == 404 and response.json()["detail"]["code"] == "demo_missing"
+    assert response.status_code == 404 and response.json()["detail"]["code"] == "demo_off"

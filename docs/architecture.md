@@ -66,7 +66,7 @@ apps/api/app/
   services/       investigation_service, auth_service, email_service (Resend), admin_service, runtime (wiring)
   repositories/   investigation_repo, user_repo, feedback_repo, run_store (memory + JSON + examples)
   db/             a small table interface with Supabase (REST) and in-memory implementations
-  api/v1/         health, investigations, evidence, reports, auth, me, feedback, contact, admin
+  api/v1/         health, investigations, evidence, reports, auth, me, billing, deposits (+ PayPal webhook), feedback, contact, admin
   core/           config, logging, security (scrypt, code and session digests, rate limits, spend ceiling)
 apps/api/tests/   fake models, fake lookups, in-memory database
 apps/web/src/     Next.js App Router: (marketing), (auth) and (app) route groups
@@ -75,6 +75,20 @@ apps/web/src/     Next.js App Router: (marketing), (auth) and (app) route groups
 ## Storage
 
 A finished run is written to `apps/api/data/runs/<id>.json` and, when Supabase is configured, to Postgres: one `investigations` row with the report (including the case file) and event log (used for report links and replays), plus the evidence trail as rows in `claims`, `sources`, `evidence`, `signals` and `findings`. Every run's model cost goes into `spend_ledger`, so the spending ceiling survives restarts on hosts with throwaway disks. Accounts (`users`, `email_codes`, `sessions`), `feedback` and `contact_messages` live alongside them. Row-level security is on with no policies; only the server's secret key can read or write.
+
+## Payments (PayPal)
+
+`services/paypal_gateway.py` is the only module that talks to PayPal, through the official `paypal-server-sdk`
+(APIMatic-generated): Orders v2 (create with `CAPTURE` or `AUTHORIZE`, authorize, capture, get, tracking), Payments v2
+(capture an authorization, void it) and webhook signature verification.
+
+`services/deposit_service.py` gates every deposit on the stored report's verdict: PROCEED creates a `CAPTURE` order paid to
+the supplier's PayPal (`payee.email_address`), VERIFY_FIRST creates an `AUTHORIZE` order (a hold), STOP is refused. A hold
+is released (captured) only after Nemotron Super reviews the supplier's proof against the report's verification questions;
+the model reports facts per question and code derives RELEASE / KEEP_HOLDING / VOID, with the pattern rules in
+`risk/rules.py` overruling it. Deposits and their review/timeline live in the `deposits` table
+(`migrations/0004_deposits.sql`); handled webhook ids in `paypal_events`. Credit packs for checks use the same gateway
+(`services/billing_service.py`).
 
 ## Deployment
 

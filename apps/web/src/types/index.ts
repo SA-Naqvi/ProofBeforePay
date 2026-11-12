@@ -433,3 +433,61 @@ export interface CaptureResult {
   balance: number;
   already_applied: boolean;
 }
+
+// ── Verdict-gated deposits through PayPal ───────────────────────────────────
+export type DepositMode = "pay" | "hold";
+export type DepositStatus = "created" | "pending" | "paid" | "held" | "released" | "voided" | "cancelled" | "failed" | "refunded";
+export type ReleaseRecommendation = "RELEASE" | "KEEP_HOLDING" | "VOID";
+
+export interface ProofReview {
+  id: string;
+  at: string;
+  model: string;
+  cost_usd: number;
+  recommendation: ReleaseRecommendation;
+  summary: string;
+  questions: { question: string; status: "ANSWERED" | "PARTIAL" | "UNANSWERED"; note: string }[];
+  concerns: string[];
+  still_needed: string[];
+  overridden_by_rules: boolean;
+  proof_excerpt: string;
+}
+
+export interface Deposit {
+  id: string;
+  run_id: string;
+  supplier_name: string;
+  decision: Decision;
+  mode: DepositMode;
+  amount: string;
+  currency: string;
+  payee_email: string | null;
+  paypal_order_id: string | null;
+  status: DepositStatus;
+  expires_at: string | null;
+  tracking: { number: string; carrier: string; added_at: string } | null;
+  reviews: ProofReview[];
+  timeline: { at: string; kind: string; text: string }[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PaymentPlan {
+  enabled: boolean;
+  mode: DepositMode | "blocked";
+  decision: Decision;
+  title: string;
+  reason: string;
+  headline: string;
+  supplier_name: string;
+  deposit_terms: string;
+  verification_questions: string[];
+  red_flags: { id: string; title: string; detail: string; why: string }[];
+  protections: string[];
+  currency: string;
+  max_amount: string;
+  environment: "sandbox" | "live";
+  suggested_payee: string;
+  sandbox_buyer: { email: string; password: string } | null;
+  deposits: Deposit[];
+}

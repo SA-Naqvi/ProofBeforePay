@@ -5,11 +5,14 @@ import type {
   CaptureResult,
   ContactMessage,
   ContactTopic,
+  Deposit,
   FeedbackItem,
   Health,
   InvestigationDetail,
   InvestigationSummary,
   OfferInput,
+  PaymentPlan,
+  ProofReview,
   PublicStats,
   User,
 } from "@/types";
@@ -87,6 +90,25 @@ export const billing = {
   get: () => request<BillingState>("/billing"),
   createOrder: (packId: string) => post<{ order_id: string; approve_url: string }>("/billing/orders", { pack_id: packId }),
   capture: (orderId: string) => post<CaptureResult>(`/billing/orders/${encodeURIComponent(orderId)}/capture`),
+};
+
+const dep = (id: string, action: string) => `/deposits/${encodeURIComponent(id)}/${action}`;
+
+/** Deposits to a supplier through PayPal. The server reads the report's verdict itself and decides pay vs hold. */
+export const deposits = {
+  plan: (runId: string) => request<PaymentPlan>(`/investigations/${encodeURIComponent(runId)}/payment`),
+  list: () => request<Deposit[]>("/deposits"),
+  start: (runId: string, amount: string, payeeEmail: string) =>
+    post<{ deposit_id: string; order_id: string; approve_url: string; mode: "pay" | "hold" }>("/deposits", {
+      run_id: runId,
+      amount,
+      payee_email: payeeEmail || null,
+    }),
+  complete: (id: string) => post<Deposit>(dep(id, "complete")),
+  review: (id: string, proof: string) => post<ProofReview>(dep(id, "review"), { proof }),
+  release: (id: string, acknowledgeRisk = false) => post<Deposit>(dep(id, "release"), { acknowledge_risk: acknowledgeRisk }),
+  cancel: (id: string) => post<Deposit>(dep(id, "cancel")),
+  track: (id: string, trackingNumber: string, carrier: string) => post<Deposit>(dep(id, "tracking"), { tracking_number: trackingNumber, carrier }),
 };
 
 export const me = {

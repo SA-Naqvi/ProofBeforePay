@@ -60,7 +60,7 @@ function LeadRow({ lead, leads, signals, depth }: { lead: Lead; leads: Lead[]; s
         </p>
         {lead.summary && lead.status !== "running" && <p className="mt-1 text-xs text-bone-500">{lead.summary}</p>}
         {found.length > 0 && (
-          <ul className="mt-2 grid gap-1">
+          <ul className="mt-2 grid grid-cols-1 gap-1">
             {found.map((s) => (
               <li key={s.id} className="flex items-start gap-2 text-xs">
                 <span className={cx("mt-1 size-1.5 shrink-0 rounded-full", POLARITY_STYLE[s.polarity].dot)} aria-hidden />
@@ -73,7 +73,7 @@ function LeadRow({ lead, leads, signals, depth }: { lead: Lead; leads: Lead[]; s
         )}
       </div>
       {children.length > 0 && (
-        <ul className="mt-1.5 grid gap-1.5">
+        <ul className="mt-1.5 grid grid-cols-1 gap-1.5">
           {children.map((child) => (
             <LeadRow key={child.id} lead={child} leads={leads} signals={signals} depth={depth + 1} />
           ))}
@@ -94,7 +94,7 @@ export function TrailPanel({ leads, signals, stopReason, waiting = false }: { le
         subtitle="Each lookup, and the finding that made us run the next one"
         right={<span className="font-mono text-xs text-bone-400">{leads.length} lookups</span>}
       />
-      <ul className="grid gap-1.5 p-3">
+      <ul className="grid grid-cols-1 gap-1.5 p-3">
         {roots.map((lead) => (
           <LeadRow key={lead.id} lead={lead} leads={leads} signals={signals} depth={0} />
         ))}

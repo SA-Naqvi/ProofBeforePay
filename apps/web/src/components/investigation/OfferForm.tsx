@@ -105,7 +105,7 @@ export function OfferForm({ live }: { live: boolean | null }) {
   const fill = Math.min(1, message.length / MAX_LENGTH);
 
   return (
-    <form onSubmit={submit} className="glass rounded-[26px] p-2 shadow-[0_40px_100px_-40px_rgba(0,0,0,0.9)]">
+    <form onSubmit={submit} className="glass rounded-[26px] p-2 shadow-[0_40px_100px_-40px_rgba(16,72,130,0.28)]">
       <div
         onDragOver={(e) => {
           e.preventDefault();
@@ -250,7 +250,7 @@ export function OfferForm({ live }: { live: boolean | null }) {
             type="submit"
             disabled={disabled}
             onPointerEnter={trackFillOrigin}
-            className="btn roll-host inline-flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-brand-500 px-6 text-sm font-semibold text-ink-950 shadow-[0_0_0_1px_rgba(118,185,0,0.5),0_14px_34px_-12px_rgba(118,185,0,0.7)] transition-[opacity,transform] [--btn-fill:var(--color-bone-50)] active:scale-[0.97] disabled:opacity-50"
+            className="btn roll-host inline-flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-brand-500 px-6 text-sm font-semibold text-ink-950 shadow-[0_0_0_1px_rgba(14,165,233,0.5),0_14px_34px_-12px_rgba(14,165,233,0.7)] transition-[opacity,transform] [--btn-fill:var(--color-bone-50)] active:scale-[0.97] disabled:opacity-50"
           >
             <span data-magnetic-inner className="inline-flex items-center gap-2">
               {busy ? <Spinner className="size-4" /> : null}

@@ -116,7 +116,7 @@ function Beams({ container, nodes }: { container: RefObject<HTMLDivElement | nul
       </defs>
       {paths.map(({ d, beam }) => (
         <g key={`${beam.from}-${beam.to}`}>
-          <path d={d} fill="none" stroke="rgb(246 243 236 / 0.09)" strokeWidth="1.5" strokeDasharray={beam.dashed ? "4 5" : undefined} />
+          <path d={d} fill="none" stroke="rgb(29 74 122 / 0.09)" strokeWidth="1.5" strokeDasharray={beam.dashed ? "4 5" : undefined} />
           <path
             data-pulse
             data-delay={beam.delay}
@@ -159,7 +159,7 @@ function RoutingDiagram({ models }: { models: Partial<Record<TierName, string>> 
         {MODELS.map((m) => {
           const s = TIER_STYLE[m.tier];
           return (
-            <li key={m.tier} ref={bind(m.tier)} className={cx("rounded-2xl border bg-ink-850 px-3 py-3 sm:px-4", m.tier === "ultra" ? "border-brand-500/40 shadow-[0_0_30px_-8px_rgba(118,185,0,0.45)]" : "border-white/[0.09]")}>
+            <li key={m.tier} ref={bind(m.tier)} className={cx("rounded-2xl border bg-ink-850 px-3 py-3 sm:px-4", m.tier === "ultra" ? "border-brand-500/40 shadow-[0_0_30px_-8px_rgba(14,165,233,0.45)]" : "border-white/[0.09]")}>
               <p className="flex items-center gap-2">
                 <span className={cx("size-2 rounded-full", s.dot)} />
                 <span className={cx("text-sm font-semibold", s.text)}>{s.label}</span>

@@ -43,7 +43,7 @@ export function FinalCta() {
             <SectionLink
               hash="#try"
               onPointerEnter={trackFillOrigin}
-              className="btn roll-host inline-flex h-14 items-center gap-3 rounded-2xl bg-brand-500 px-8 text-base font-semibold text-ink-950 shadow-[0_0_0_1px_rgba(118,185,0,0.5),0_24px_60px_-18px_rgba(118,185,0,0.8)] [--btn-fill:var(--color-bone-50)]"
+              className="btn roll-host inline-flex h-14 items-center gap-3 rounded-2xl bg-brand-500 px-8 text-base font-semibold text-ink-950 shadow-[0_0_0_1px_rgba(14,165,233,0.5),0_24px_60px_-18px_rgba(14,165,233,0.8)] [--btn-fill:var(--color-bone-50)]"
             >
               <span data-magnetic-inner className="inline-flex items-center gap-3">
                 <RollText text="Check a supplier" />
