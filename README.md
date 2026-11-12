@@ -19,7 +19,7 @@ rules in code have the last word.
 
 **Built for "Build What's Next with PayPal and AI"**
 
-**[Live demo](LIVE_DEMO_URL)** · **[Demo video (under 3 min)](VIDEO_URL)** · [Architecture](docs/architecture.md) · [How it decides](docs/risk-methodology.md) · [Threat model](docs/threat-model.md)
+**[Live demo]([LIVE_DEMO_URL](https://proofbeforepay-1.onrender.com/))** · **[Demo video (under 3 min)]([VIDEO_URL](https://youtu.be/bkO-AO2yaQQ))** · [Architecture](docs/architecture.md) · [How it decides](docs/risk-methodology.md) · [Threat model](docs/threat-model.md)
 
 <img src="docs/images/home.jpg" alt="ProofBeforePay home page: a supplier quotation being scanned, with findings pinned to it" width="100%" />
 
